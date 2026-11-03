@@ -511,8 +511,8 @@ function shell(parts, day, meetings, air, { centerTitle, centerMeta, clock, left
     pageHeader(parts, variantLabel(day), centerTitle, centerMeta),
     clock,
     node("div", { class: "columns" },
-      node("section", { class: "col" }, left),
-      node("section", { class: "col" }, right),
+      node("section", { class: "col main" }, left),
+      node("section", { class: "col side" }, right),
     ),
     bottom,
   );
@@ -646,30 +646,32 @@ function renderSegment(current) {
   const type = current.type === "game" ? "quiz" : current.type;
   if (type === "youtube") {
     const id = youtubeId(current.videoId);
-    return node("div", {},
-      id ? node("div", { class: "frame-wrap" },
-        node("iframe", {
-          src: `https://www.youtube-nocookie.com/embed/${id}?rel=0`,
-          title: current.title || "Lesson video",
-          allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
-          allowfullscreen: "true",
-        })) : node("p", { class: "lesson" }, "Add a YouTube video id to this segment."),
+    return node("div", { class: "segment" },
+      id ? node("div", { class: "frame-slot" },
+        node("div", { class: "frame-wrap" },
+          node("iframe", {
+            src: `https://www.youtube-nocookie.com/embed/${id}?rel=0`,
+            title: current.title || "Lesson video",
+            allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+            allowfullscreen: "true",
+          }))) : node("p", { class: "lesson" }, "Add a YouTube video id to this segment."),
       node("button", { class: "go ghost stepback", onclick: back }, "Step back"),
     );
   }
   if (type === "edpuzzle") {
     const url = safeUrl(current.url);
-    return node("div", {},
+    return node("div", { class: "segment" },
       lines(current.lines),
       url
         ? node("a", { class: "open-link", href: url, target: "_blank", rel: "noopener noreferrer" }, "Open the Edpuzzle assignment")
         : (current.lines?.length ? null : node("p", { class: "lesson" }, "Paste today's Edpuzzle link into this class in the date file.")),
-      url && (current.embed || url.includes("/embed/")) ? node("div", { class: "frame-wrap" },
-        node("iframe", { src: url, title: current.title || "Edpuzzle", allow: "fullscreen", allowfullscreen: "true" })) : null,
+      url && (current.embed || url.includes("/embed/")) ? node("div", { class: "frame-slot" },
+        node("div", { class: "frame-wrap" },
+          node("iframe", { src: url, title: current.title || "Edpuzzle", allow: "fullscreen", allowfullscreen: "true" }))) : null,
     );
   }
   if (type === "run-video") {
-    return node("div", {},
+    return node("div", { class: "segment" },
       lines(current.lines?.length ? current.lines : [
         ["The class is working.", "Step back if the screen needs to show the video again."],
       ]),
@@ -705,7 +707,7 @@ function quiz(current) {
       onclick: () => { state.quizAt += 1; state.revealed = -1; state.renderKey = ""; poke(); },
     }, "Next question")
     : null;
-  return node("div", {},
+  return node("div", { class: "segment" },
     node("p", { class: "lesson" }, question.q),
     node("div", { class: "opts" }, options),
     tables,
@@ -738,7 +740,7 @@ function dayList(parts, meetings, air) {
     return node("div", { class: `row${on ? " on" : ""}${done ? " done" : ""}` },
       node("div", { class: "t" }, formatTimeLabel(meeting.startSec).replace(" ", "\u00a0")),
       node("div", { class: "n" }, meeting.title, meeting.needsConfirmation ? node("span", { class: "pill" }, "CONFIRM") : null),
-      node("div", { class: "s" }, `${meeting.subject || meeting.blockName} · until ${formatTimeLabel(meeting.endSec)}`),
+      node("div", { class: "s" }, meeting.subject || meeting.blockName || ""),
     );
   });
   return node("aside", { class: "daylist" },
