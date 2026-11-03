@@ -1,5 +1,5 @@
 {
-  "_comment": "Tony's classes. MS/HS STEM uses a bell block (\"1\" or \"2\") so Thursday and daily-chapel pick up the shorter period from data/schedule.json. Elementary rows use clock times from the resource grid. halfDay: true means the class still meets on a half-day variant. needsConfirmation marks a time Tony still wants checked. Student names are not stored here. Load a roster from the TV (see media/roster.example.csv).",
+  "_comment": "Tony's classes. MS/HS STEM uses a bell block (\"1\" or \"2\") so Thursday and daily-chapel pick up the shorter period from data/schedule.json. Elementary rows use clock times from the resource grid. halfDay: true means the class still meets on a half-day variant. Friday 5-A Rogers is 10:35–11:15 and Friday 6-B King is 11:30–12:05, confirmed by Tony. Student names are not stored here. Load a roster from the TV (see media/roster.example.csv).",
   "classes": [
     {
       "id": "hs-stem",
@@ -131,14 +131,7 @@
       "tables": 4,
       "meets": [
         {"weekdays": ["tue"], "start": "11:30", "end": "12:00"},
-        {
-          "weekdays": ["fri"],
-          "start": "11:30",
-          "end": "12:05",
-          "subject": "STEAM lab",
-          "needsConfirmation": true,
-          "note": "Friday lab. Recently swapped with King. Confirm 11:30–12:05. The printed grid has Rogers in STEAM at this time."
-        }
+        {"weekdays": ["fri"], "start": "10:35", "end": "11:15"}
       ]
     },
     {
@@ -198,13 +191,7 @@
       "teacher": "King",
       "tables": 4,
       "meets": [
-        {
-          "weekdays": ["fri"],
-          "start": "10:45",
-          "end": "11:15",
-          "needsConfirmation": true,
-          "note": "Recently swapped with Rogers. Confirm about 10:45–11:15. The printed grid still has King in STEAM at 11:30–12:05."
-        }
+        {"weekdays": ["fri"], "start": "11:30", "end": "12:05"}
       ]
     },
     {

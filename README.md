@@ -43,7 +43,9 @@ Special days are rows in `overrides`. Delete `"example": true` to make a row liv
 - `"cancelClasses": ["e-5a-rogers"]` drops a class (field trip) and leaves the rest.
 - `"retimes": {"hs-stem": {"start": "08:00", "end": "08:30"}}` moves one class.
 
-Friday 6-B King and 5-A Rogers are flagged `needsConfirmation`. The printed grid and the swap Tony described do not match yet. Clear the flag when the office confirms the times.
+Friday elementary STEAM, confirmed: 5-A Rogers 10:35–11:15, then 6-B King 11:30–12:05.
+
+Open the TV once in the morning. It stays up all day and follows the clock: a gap or chapel shows who is next, the start of a period shows **Waiting for class** (the bell countdown stays up), and **Class Started** (or Space or Enter) builds that period's lesson to fit the time left. After the bell it moves on by itself. A reload does not remember that the class had started. It comes back to Waiting and plans again from the clock.
 
 ## Add a day's lesson
 

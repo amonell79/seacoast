@@ -3,17 +3,19 @@ import {
   formatDuration,
   formatTimeLabel,
   meetingsOn,
+  occurrenceKey,
   paceSegments,
   parsePretend,
   pickOnAir,
   playlistFor,
   schoolParts,
+  screenFor,
   shiftParts,
 } from "./engine.mjs";
 
 const params = new URLSearchParams(location.search);
-const autostart = params.get("autostart") !== "0";
 const includeExamples = params.get("examples") === "1";
+const previewStarted = params.get("started") === "1";
 const app = document.getElementById("app");
 const drawer = document.getElementById("drawer");
 const vo = document.getElementById("vo");
@@ -28,8 +30,8 @@ const state = {
   loadedDate: "",
   pretend: null,
   origin: 0,
-  view: "board",
-  hold: false,
+  view: "idle",
+  startedKey: null,
   meeting: null,
   playlist: null,
   paced: [],
@@ -46,6 +48,7 @@ const state = {
   muted: false,
   renderKey: "",
   clockEnd: null,
+  clockStart: null,
   partSeconds: 0,
   jump: Number(params.get("part")) || 0,
 };
@@ -115,23 +118,31 @@ async function tick() {
     await ensureDate(parts.ymd);
     const { day, meetings } = meetingsOn(parts, state.schedule, state.classes, { includeExamples });
     const air = pickOnAir(parts.daySeconds, meetings);
-    if (state.view === "run" && state.meeting) {
-      if (!state.paused && parts.daySeconds >= state.meeting.endSec) {
-        leaveRun();
-      } else {
-        advance();
-        paintRun(parts, day);
-        updateClocks(parts);
-        return;
-      }
+    let screen = screenFor(parts, air, state.startedKey);
+    if (screen.mode === "waiting" && previewStarted && state.pretend && state.startedKey !== screen.key) {
+      begin(screen.meeting, parts);
+      screen = screenFor(parts, air, state.startedKey);
     }
-    if (autostart && !state.hold && air.phase === "class") {
-      begin(air.live, parts);
-      paintRun(parts, day);
-      updateClocks(parts);
-      return;
+    if (screen.mode !== "running" && state.view === "run") releaseMedia();
+    if (screen.mode === "running") {
+      const same = state.view === "run"
+        && state.meeting
+        && state.meeting.classId === screen.meeting.classId
+        && state.meeting.startSec === screen.meeting.startSec;
+      if (!same) begin(screen.meeting, parts);
+      advance();
+      paintRun(parts, day, meetings, air);
+    } else if (screen.mode === "waiting") {
+      state.view = "waiting";
+      state.meeting = screen.meeting;
+      paintWaiting(parts, day, meetings, air);
+    } else {
+      state.view = "idle";
+      state.startedKey = null;
+      state.meeting = null;
+      state.paced = [];
+      paintIdle(parts, day, meetings, air, screen);
     }
-    paintBoard(parts, day, meetings, air);
     updateClocks(parts);
   } finally {
     ticking = false;
@@ -150,13 +161,13 @@ function hydrate(segment) {
 }
 
 function begin(meeting, parts) {
+  state.startedKey = occurrenceKey(parts.ymd, meeting);
   state.meeting = meeting;
   state.playlist = playlistFor(meeting.classId, meeting.level, state.dateContent, state.defaults);
   const segments = (state.playlist.segments || []).map(hydrate);
   const available = Math.max(1, Math.round(meeting.endSec - parts.daySeconds));
   state.paced = paceSegments(segments, available, meeting.lengthSec);
   state.view = "run";
-  state.hold = false;
   state.paused = false;
   state.scores = {};
   state.quizAt = 0;
@@ -174,15 +185,30 @@ function begin(meeting, parts) {
   playVoice();
 }
 
-function leaveRun() {
-  stopVoice();
+function releaseMedia() {
+  vo.onended = null;
+  vo.pause();
+  vo.removeAttribute("src");
+  try { vo.load(); } catch { /* already empty */ }
   bed.pause();
-  state.view = "board";
-  state.meeting = null;
-  state.hold = false;
+  bed.removeAttribute("src");
+  try { bed.load(); } catch { /* already empty */ }
+}
+
+function returnToWaiting() {
+  releaseMedia();
+  state.startedKey = null;
+  state.view = "waiting";
+  state.paced = [];
   state.attOpen = false;
   drawer.hidden = true;
   state.renderKey = "";
+}
+
+function classStarted() {
+  if (state.view !== "waiting" || !state.meeting) return;
+  begin(state.meeting, nowParts());
+  poke();
 }
 
 function go(index) {
@@ -278,6 +304,16 @@ function fullscreen() {
 function onKey(event) {
   if (event.target.matches("input, textarea")) return;
   const key = event.key;
+  if ((key === " " || key === "Enter") && state.view === "waiting") {
+    event.preventDefault();
+    classStarted();
+    return;
+  }
+  if (key === "Enter" && state.view === "run") {
+    event.preventDefault();
+    next();
+    return;
+  }
   if (key === " ") {
     event.preventDefault();
     togglePause();
@@ -295,13 +331,11 @@ function onKey(event) {
   } else if (key === "Escape") {
     if (state.attOpen) toggleAtt();
     else if (state.view === "run") {
-      state.hold = true;
-      leaveRun();
-      state.hold = true;
+      returnToWaiting();
     }
     poke();
-  } else if ((key === "s" || key === "S") && state.view === "board") {
-    startFromBoard();
+  } else if ((key === "s" || key === "S") && state.view === "waiting") {
+    classStarted();
   } else if (/^[1-4]$/.test(key) && (segment().type === "quiz" || segment().type === "game")) {
     choose(Number(key) - 1);
   }
@@ -309,25 +343,14 @@ function onKey(event) {
 
 function next() {
   if (state.view !== "run") return;
-  if (state.index >= state.paced.length - 1) {
-    state.hold = true;
-    leaveRun();
-    state.hold = true;
-  } else {
-    go(state.index + 1);
-  }
+  if (state.index < state.paced.length - 1) go(state.index + 1);
   poke();
 }
 
 function back() {
   if (state.view !== "run") return;
-  if (state.index === 0) {
-    state.hold = true;
-    leaveRun();
-    state.hold = true;
-  } else {
-    go(state.index - 1);
-  }
+  if (state.index === 0) returnToWaiting();
+  else go(state.index - 1);
   poke();
 }
 
@@ -335,23 +358,6 @@ function poke() {
   if (!ticking) void tick();
 }
 
-function launch(meeting) {
-  if (!meeting) return;
-  begin(meeting, nowParts());
-  fullscreen();
-  poke();
-}
-
-function startFromBoard() {
-  const parts = nowParts();
-  const { meetings } = meetingsOn(parts, state.schedule, state.classes, { includeExamples });
-  const air = pickOnAir(parts.daySeconds, meetings);
-  const target = air.live?.kind === "class" ? air.live : air.nextClass;
-  if (!target) return;
-  begin(target, parts);
-  fullscreen();
-  poke();
-}
 
 function absentKey(table, student) {
   return `${table}::${student || ""}`;
@@ -480,141 +486,148 @@ function award(tableName) {
   poke();
 }
 
-function paintBoard(parts, day, meetings, air) {
-  const focus = air.live || air.upcoming;
-  const key = [
-    "board", parts.ymd, day.variantId, air.phase,
-    focus?.classId || "", focus?.start || "", state.pretend ? "p" : "",
-    day.override?.label || "",
-  ].join("|");
-  state.clockEnd = air.live ? air.live.endSec : null;
-  if (key === state.renderKey) return;
-  state.renderKey = key;
-  const variant = day.override ? `${day.variant.label} · ${day.override.label}` : day.variant.label;
-  let kicker = "Up next";
-  let title = "No class on the board";
-  let lesson = "";
-  let clockLabel = "";
-  let ends = "";
-  let action = null;
-  if (day.variantId === "none") {
-    kicker = "Today";
-    title = "No school";
-    lesson = day.override?.label || "The schedule has this day cleared.";
-  } else if (air.phase === "class") {
-    kicker = "Now";
-    title = air.live.title;
-    lesson = air.live.subject;
-    clockLabel = "until the bell";
-    ends = `Ends ${formatTimeLabel(air.live.endSec)}`;
-    state.clockEnd = air.live.endSec;
-    action = node("button", { class: "go", onclick: () => launch(air.live) }, "Start");
-  } else if (air.phase === "chapel") {
-    kicker = "Now";
-    title = air.live.title;
-    lesson = air.live.note || "No class in this room.";
-    clockLabel = "until chapel ends";
-    ends = air.nextClass ? `Next · ${air.nextClass.title} at ${formatTimeLabel(air.nextClass.startSec)}` : "";
-    state.clockEnd = air.live.endSec;
-    if (air.nextClass) {
-      action = node("button", {
-        class: "go ghost",
-        onclick: () => launch(air.nextClass),
-      }, `Start ${air.nextClass.title} early`);
-    }
-  } else if (air.upcoming) {
-    kicker = air.phase === "between" ? "Up next" : "Up next";
-    title = air.upcoming.kind === "class" ? air.upcoming.title : air.upcoming.title;
-    lesson = air.upcoming.kind === "class" ? air.upcoming.subject : (air.nextClass ? `Then ${air.nextClass.title}` : "");
-    clockLabel = "until it starts";
-    ends = `Ends ${formatTimeLabel(air.upcoming.endSec)}`;
-    state.clockEnd = null;
-    const startable = air.upcoming.kind === "class" ? air.upcoming : air.nextClass;
-    if (startable) {
-      action = node("button", { class: "go", onclick: () => launch(startable) }, "Start");
-    }
-  } else {
-    kicker = "Today";
-    title = "That's the day";
-    lesson = "Nothing else is on the board.";
-  }
+function variantLabel(day) {
+  return day.override ? `${day.variant.label} · ${day.override.label}` : day.variant.label;
+}
 
-  const clockText = air.live
-    ? formatDuration(air.live.endSec - parts.daySeconds)
-    : (air.upcoming ? formatDuration(air.upcoming.startSec - parts.daySeconds) : "");
-
-  const hero = node("section", { class: "hero" },
-    node("p", { class: "kicker" }, kicker),
-    node("h1", {}, title),
-    lesson ? node("p", { class: "lesson" }, lesson) : null,
-    focus?.needsConfirmation ? node("p", { class: "confirm" }, focus.note || "Confirm this time.") : null,
-    clockText ? node("div", { class: "clock-block" },
-      node("p", { class: "clock", "data-clock": air.live ? "bell" : "starts" }, clockText),
-      node("p", { class: "clock-label" }, clockLabel),
-      ends ? node("p", { class: "ends-at" }, ends) : null,
-    ) : null,
-    action,
-  );
-
-  app.replaceChildren(
-    previewBar(parts),
-    node("div", { class: "board" },
-      header(parts, variant),
-      hero,
-      dayList(parts, meetings, air),
-      footer(),
+function clockBand({ kicker, attr, text, label, detail, railNode }) {
+  const clockAttrs = { class: "clock" };
+  if (attr) clockAttrs["data-clock"] = attr;
+  return node("section", { class: "clockband" },
+    node("div", { class: "clockrow" },
+      node("p", { class: "kicker" }, kicker),
+      node("p", clockAttrs, text),
+      node("div", { class: "clockside" },
+        label ? node("p", { class: "clock-label" }, label) : null,
+        detail || null,
+      ),
     ),
+    railNode || null,
   );
 }
 
-function paintRun(parts, day) {
+function shell(parts, day, meetings, air, { centerTitle, centerMeta, clock, left, right, bottom }) {
+  return node("div", { class: "shell" },
+    pageHeader(parts, variantLabel(day), centerTitle, centerMeta),
+    clock,
+    node("div", { class: "columns" },
+      node("section", { class: "col" }, left),
+      node("section", { class: "col" }, right),
+    ),
+    bottom,
+  );
+}
+
+function paintIdle(parts, day, meetings, air, screen) {
+  const next = screen.nextClass;
+  const key = ["idle", parts.ymd, day.variantId, next?.classId || "", next?.start || "", screen.chapel?.title || ""].join("|");
+  state.clockEnd = null;
+  state.clockStart = next ? next.startSec : null;
+  state.partSeconds = 0;
+  if (key === state.renderKey) return;
+  state.renderKey = key;
+  const left = [
+    node("p", { class: "kicker" }, screen.chapel ? "Chapel" : (next ? "Up next" : "Today")),
+    node("h1", {}, next ? next.title : (day.variantId === "none" ? "No school" : "That's the day")),
+    node("p", { class: "lesson" }, next
+      ? (next.subject || "")
+      : (day.override?.label || "Nothing else is on the board.")),
+    next ? node("p", { class: "ends-at" }, `${formatTimeLabel(next.startSec)} – ${formatTimeLabel(next.endSec)}`) : null,
+    screen.chapel ? node("p", { class: "lesson" }, "No class in this room.") : null,
+  ];
+  app.replaceChildren(
+    previewBar(parts),
+    shell(parts, day, meetings, air, {
+      centerTitle: next ? next.title : "Today",
+      centerMeta: screen.chapel ? screen.chapel.title : (next?.subject || ""),
+      clock: clockBand({
+        kicker: next ? "Next class" : "Today",
+        attr: next ? "starts" : "",
+        text: next ? formatDuration(next.startSec - parts.daySeconds) : "—",
+        label: next ? "until it starts" : "",
+        detail: next ? node("p", { class: "ends-at" }, `Starts ${formatTimeLabel(next.startSec)}`) : null,
+      }),
+      left,
+      right: dayList(parts, meetings, air),
+      bottom: footer(),
+    }),
+  );
+}
+
+function paintWaiting(parts, day, meetings, air) {
+  const meeting = air.live;
+  const key = ["wait", parts.ymd, meeting.classId, meeting.start].join("|");
+  state.clockEnd = meeting.endSec;
+  state.clockStart = null;
+  state.partSeconds = 0;
+  if (key === state.renderKey) return;
+  state.renderKey = key;
+  const plan = playlistFor(meeting.classId, meeting.level, state.dateContent, state.defaults);
+  app.replaceChildren(
+    previewBar(parts),
+    shell(parts, day, meetings, air, {
+      centerTitle: meeting.title,
+      centerMeta: `${meeting.blockName || meeting.subject} · ends ${formatTimeLabel(meeting.endSec)}`,
+      clock: clockBand({
+        kicker: "Until the bell",
+        attr: "bell",
+        text: formatDuration(meeting.endSec - parts.daySeconds),
+        label: "waiting for class",
+        detail: node("p", { class: "ends-at" }, `Ends ${formatTimeLabel(meeting.endSec)}`),
+      }),
+      left: [
+        node("p", { class: "kicker" }, "Waiting for class"),
+        plan?.title ? node("p", { class: "lesson" }, plan.title) : null,
+        meeting.needsConfirmation ? node("p", { class: "confirm" }, meeting.note || "Confirm this time.") : null,
+        node("button", { class: "go class-started", "data-start-class": "1", onclick: classStarted }, "Class Started"),
+        node("p", { class: "hintkey" }, "Space or Enter"),
+      ],
+      right: dayList(parts, meetings, air),
+      bottom: footer(),
+    }),
+  );
+  document.querySelector("[data-start-class]")?.focus({ preventScroll: true });
+}
+
+function paintRun(parts, day, meetings, air) {
   const current = segment();
   const key = [
     "run", state.meeting.classId, state.index, state.quizAt, state.revealed,
     Object.entries(state.scores).join(),
   ].join("|");
   state.clockEnd = state.meeting.endSec;
+  state.clockStart = null;
   state.partSeconds = current.seconds || 0;
   if (key === state.renderKey) return;
   state.renderKey = key;
   const nextSeg = state.paced[state.index + 1];
   const nextTitle = nextSeg ? (nextSeg.title || nextSeg.type) : "Bell";
-  const lesson = state.playlist?.title || "";
-  const body = renderSegment(current);
+  const lesson = state.playlist?.title || state.meeting.subject;
   const stepWord = current.type === "run-video" || current.type === "youtube" ? "Step back" : "Back";
-
   app.replaceChildren(
     previewBar(parts),
-    node("div", { class: "run" },
-      node("header", { class: "top" },
-        node("div", { class: "brand" },
-          node("img", { src: "media/logo.png", alt: "Seacoast Christian Academy" }),
-          node("div", {},
-            node("div", { class: "word" }, "CLASS TV"),
-            node("div", { class: "subline" }, `${state.meeting.blockName || state.meeting.subject} · ${Math.round(state.meeting.lengthSec / 60)} min · ends ${formatTimeLabel(state.meeting.endSec)}`),
-          ),
-        ),
-        node("div", { class: "when" },
-          node("div", { class: "date" }, state.meeting.title),
-          node("div", { class: "meta" }, lesson || state.meeting.subject),
-        ),
-      ),
-      node("section", { class: "stage" },
+    shell(parts, day, meetings, air, {
+      centerTitle: state.meeting.title,
+      centerMeta: `${state.meeting.blockName || state.meeting.subject} · ${Math.round(state.meeting.lengthSec / 60)} min · ends ${formatTimeLabel(state.meeting.endSec)}`,
+      clock: clockBand({
+        kicker: "Until the bell",
+        attr: "bell",
+        text: formatDuration(state.meeting.endSec - parts.daySeconds),
+        label: node("span", {}, "this part ", node("span", { "data-clock": "part" }, formatDuration(Math.max(0, current.seconds - elapsed()))), " left"),
+        detail: node("p", { class: "next" }, `Next · ${nextTitle}`),
+        railNode: rail(),
+      }),
+      left: [
         state.index === 0 && state.playlist?.standby
           ? node("p", { class: "standby" }, state.playlist.standby)
           : node("p", { class: "kicker" }, `Part ${state.index + 1} of ${state.paced.length}`),
         node("h1", {}, current.title || current.type),
+        lesson ? node("p", { class: "lesson" }, lesson) : null,
         state.meeting.needsConfirmation ? node("p", { class: "confirm" }, state.meeting.note || "Confirm this time.") : null,
-        body,
-      ),
-      node("aside", { class: "bell-panel" },
-        node("p", { class: "kicker" }, "Until the bell"),
-        node("p", { class: "clock", "data-clock": "bell" }, formatDuration(state.meeting.endSec - parts.daySeconds)),
-        node("p", { class: "clock-label" }, `${formatTimeLabel(state.meeting.endSec)} · this part `, node("span", { "data-clock": "part" }, formatDuration(Math.max(0, current.seconds - elapsed()))), " left"),
-        node("p", { class: "next" }, `Next · ${nextTitle}`),
-      ),
-      rail(),
-      node("div", { class: "controls ctrl" },
+        renderSegment(current),
+      ],
+      right: dayList(parts, meetings, air),
+      bottom: node("div", { class: "controls ctrl" },
         node("button", { onclick: back }, stepWord),
         node("button", { "data-pause": "1", onclick: () => { togglePause(); poke(); } }, state.paused ? "Resume" : "Pause"),
         node("button", { class: "primary", onclick: next }, "Next"),
@@ -624,7 +637,7 @@ function paintRun(parts, day) {
         node("button", { "data-mute": "1", onclick: () => { toggleMute(); poke(); } }, state.muted ? "Sound on" : "Mute"),
         node("button", { onclick: fullscreen }, "Full screen"),
       ),
-    ),
+    }),
   );
   if (current.type === "run-video" && !state.paused && !state.muted && vo.paused) bed.play().catch(() => {});
 }
@@ -734,11 +747,15 @@ function dayList(parts, meetings, air) {
   );
 }
 
-function header(parts, variant) {
+function pageHeader(parts, variant, centerTitle, centerMeta) {
   return node("header", { class: "top" },
     node("div", { class: "brand" },
       node("img", { src: "media/logo.png", alt: "Seacoast Christian Academy" }),
       node("div", { class: "word" }, "CLASS TV"),
+    ),
+    node("div", { class: "classhead" },
+      node("div", { class: "date" }, centerTitle || ""),
+      centerMeta ? node("div", { class: "meta" }, centerMeta) : null,
     ),
     node("div", { class: "when" },
       node("div", { class: "date" }, formatDateLabel(parts)),
@@ -750,7 +767,7 @@ function header(parts, variant) {
 
 function footer() {
   return node("footer", { class: "foot" },
-    node("div", {}, "Space pauses · arrows move · A attendance · R refits to the bell · ?now=2026-11-05T08:10 previews a moment"),
+    node("div", {}, "Class Started: Space or Enter · arrows move · A attendance · R refits to the bell"),
     node("div", {},
       node("a", { href: "sites/stem/" }, "STEM shell"),
       " · ",
@@ -775,9 +792,10 @@ function updateClocks(parts) {
     item.classList.toggle("urgent", left < 60);
   });
   document.querySelectorAll("[data-clock=starts]").forEach((item) => {
-    const { meetings } = meetingsOn(parts, state.schedule, state.classes, { includeExamples });
-    const air = pickOnAir(parts.daySeconds, meetings);
-    if (air.upcoming) item.textContent = formatDuration(air.upcoming.startSec - parts.daySeconds);
+    if (state.clockStart == null) return;
+    const remain = state.clockStart - parts.daySeconds;
+    item.textContent = formatDuration(remain);
+    item.classList.toggle("soon", remain < 300 && remain >= 60);
   });
   document.querySelectorAll("[data-clock=part]").forEach((item) => {
     item.textContent = formatDuration(Math.max(0, state.partSeconds - elapsed()));

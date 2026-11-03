@@ -266,6 +266,41 @@ export function meetingsOn(parts, schedule, classFile, options = {}) {
   return { day, meetings };
 }
 
+export function occurrenceKey(ymd, meeting) {
+  return `${ymd}|${meeting.classId}|${meeting.startSec}`;
+}
+
+/**
+ * The all-day screen, from the clock alone.
+ * `startedKey` is set only after Class Started for this exact occurrence.
+ * It is not stored anywhere, so a reload comes back as "waiting" and the
+ * lesson is planned again from the time left until the bell.
+ */
+export function screenFor(parts, air, startedKey) {
+  if (air.phase === "class" && air.live) {
+    const key = occurrenceKey(parts.ymd, air.live);
+    return {
+      mode: startedKey === key ? "running" : "waiting",
+      key,
+      meeting: air.live,
+      endsIn: air.live.endSec - parts.daySeconds,
+      nextClass: air.nextClass || null,
+      chapel: null,
+      startsIn: null,
+    };
+  }
+  const nextClass = air.nextClass || null;
+  return {
+    mode: "idle",
+    key: null,
+    meeting: null,
+    endsIn: null,
+    nextClass,
+    chapel: air.phase === "chapel" ? air.live : null,
+    startsIn: nextClass ? nextClass.startSec - parts.daySeconds : null,
+  };
+}
+
 export function pickOnAir(daySeconds, meetings) {
   const classes = meetings.filter((meeting) => meeting.kind === "class");
   const liveClass = classes.find((meeting) => daySeconds >= meeting.startSec && daySeconds < meeting.endSec) || null;

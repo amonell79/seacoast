@@ -42,30 +42,21 @@ button { cursor: pointer; }
   padding: .45rem 1rem;
 }
 
-.board, .run {
+.shell {
   flex: 1;
   min-height: 0;
   display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   padding: var(--pad);
-  gap: clamp(10px, 1.4vh, 18px);
-}
-.board {
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, .8fr);
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  grid-template-areas: "top top" "hero list" "foot foot";
-}
-.run {
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 34vw);
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
-  grid-template-areas: "top bell" "stage bell" "rail rail" "controls controls";
+  gap: clamp(8px, 1.2vh, 16px);
 }
 
 .top {
-  grid-area: top;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: clamp(8px, 1.5vw, 24px);
+  width: 100%;
   min-width: 0;
 }
 .brand { display: flex; align-items: center; gap: clamp(12px, 1.5vw, 22px); min-width: 0; }
@@ -76,7 +67,9 @@ button { cursor: pointer; }
   color: var(--gold);
   font-size: clamp(14px, 1.6vw, 22px);
 }
-.when { text-align: right; max-width: min(46ch, 48%); }
+.classhead { text-align: center; min-width: 0; }
+.classhead .date { font-weight: 900; font-size: clamp(28px, 3.4vw, 56px); letter-spacing: -.03em; line-height: 1; }
+.when { text-align: right; min-width: 0; }
 .standby {
   margin: 0 0 .7rem;
   max-width: 36ch;
@@ -100,8 +93,39 @@ button { cursor: pointer; }
   font-size: clamp(18px, 2.4vw, 36px);
 }
 
-.hero, .stage { grid-area: hero; min-width: 0; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
-.stage { grid-area: stage; }
+.clockband {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  min-width: 0;
+}
+.clockrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3vw, 56px);
+  width: 100%;
+}
+.clockside { text-align: left; min-width: 12ch; }
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 2vw, 32px);
+  min-height: 0;
+  min-width: 0;
+}
+.col {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: auto;
+}
 .kicker {
   font-family: var(--mono);
   letter-spacing: .22em;
@@ -122,7 +146,15 @@ h1 {
   font-size: clamp(18px, 2.2vw, 32px);
   font-weight: 500;
   color: var(--dim);
-  max-width: 28ch;
+  max-width: 34ch;
+}
+.hintkey {
+  margin: .6rem 0 0;
+  font-family: var(--mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-size: clamp(12px, 1.2vw, 16px);
 }
 .subline {
   margin: .35rem 0 0;
@@ -151,7 +183,7 @@ h1 {
   font-variant-numeric: tabular-nums;
   letter-spacing: -.04em;
   line-height: .85;
-  font-size: clamp(72px, 16vh, 240px);
+  font-size: clamp(72px, 14vh, 168px);
   margin: 0;
 }
 .clock.soon { color: var(--gold); }
@@ -172,23 +204,30 @@ h1 {
 }
 .go {
   margin-top: clamp(12px, 2vh, 24px);
-  align-self: flex-start;
+  align-self: center;
   background: var(--gold);
   color: #1a1400;
   font-size: clamp(20px, 2.4vw, 34px);
   padding: .7rem 1.4rem;
 }
+.class-started {
+  font-size: clamp(32px, 4vw, 64px);
+  padding: .75em 1.1em;
+  min-width: min(100%, 12ch);
+  min-height: 2.4em;
+}
 .go:hover, .go:focus-visible { background: #ffe863; }
 .go.ghost { background: transparent; color: var(--chalk); box-shadow: inset 0 0 0 2px var(--navy-edge); }
 
 .daylist {
-  grid-area: list;
-  min-height: 0;
+  width: min(100%, 520px);
+  max-height: 100%;
   overflow: auto;
   background: rgba(10, 22, 72, .55);
   border: 1px solid rgba(80, 112, 210, .45);
   border-radius: 16px;
   padding: clamp(12px, 1.6vh, 20px);
+  text-align: center;
 }
 .daylist h2 {
   margin: 0 0 .6rem;
@@ -201,15 +240,16 @@ h1 {
 }
 .row {
   display: grid;
-  grid-template-columns: 7.2rem minmax(0, 1fr);
-  gap: .35rem .8rem;
-  align-items: baseline;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: .1rem;
   padding: .55rem .4rem;
   border-radius: 8px;
+  text-align: center;
 }
 .row .t { font-family: var(--mono); font-weight: 700; font-size: clamp(14px, 1.4vw, 18px); }
 .row .n { font-weight: 800; font-size: clamp(16px, 1.7vw, 24px); }
-.row .s { grid-column: 2; color: var(--muted); font-size: clamp(12px, 1.2vw, 16px); }
+.row .s { color: var(--muted); font-size: clamp(12px, 1.2vw, 16px); }
 .row.on { background: rgba(254, 217, 22, .12); box-shadow: inset 3px 0 0 var(--gold); }
 .row.done { opacity: .45; }
 .pill {
@@ -225,47 +265,33 @@ h1 {
 }
 
 .foot {
-  grid-area: foot;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
   flex-wrap: wrap;
+  text-align: center;
   color: var(--muted);
   font-size: clamp(12px, 1.15vw, 16px);
 }
 .foot a { color: var(--dim); }
 
-.bell-panel {
-  grid-area: bell;
-  background: rgba(8, 16, 52, .72);
-  border: 1px solid rgba(80, 112, 210, .45);
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: clamp(12px, 2vh, 28px);
-  min-width: 0;
-}
-.bell-panel .clock { font-size: clamp(64px, 14vh, 220px); }
-.bell-panel .next {
-  margin: .8rem 0 0;
-  font-size: clamp(16px, 1.8vw, 26px);
+.clockband .next {
+  margin: .35rem 0 0;
+  font-size: clamp(16px, 1.8vw, 28px);
   font-weight: 700;
   color: var(--gold);
-  max-width: 18ch;
 }
 
-.stage h1 { font-size: clamp(32px, 4.6vw, 72px); }
+.col h1 { font-size: clamp(32px, 4.2vw, 64px); }
 .lines {
   list-style: none;
   margin: clamp(8px, 1.5vh, 18px) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: clamp(6px, 1vh, 12px);
-  max-width: 920px;
+  width: min(100%, 720px);
   overflow: auto;
 }
 .lines li {
@@ -273,6 +299,8 @@ h1 {
   border: 1px solid rgba(120, 150, 230, .35);
   border-radius: 12px;
   padding: clamp(8px, 1.2vh, 14px) clamp(12px, 1.4vw, 22px);
+  text-align: center;
+  width: 100%;
 }
 .lines strong { display: block; font-size: clamp(18px, 2.3vw, 34px); line-height: 1.15; }
 .lines em {
@@ -285,9 +313,9 @@ h1 {
 }
 .frame-wrap {
   margin-top: .6rem;
-  width: min(100%, 960px);
+  width: min(100%, 720px);
   aspect-ratio: 16 / 9;
-  max-height: 52vh;
+  max-height: 36vh;
   background: #000;
   border-radius: 12px;
   overflow: hidden;
@@ -306,14 +334,14 @@ h1 {
 }
 .stepback {
   margin-top: .8rem;
-  align-self: flex-start;
+  align-self: center;
 }
 
 .rail {
-  grid-area: rail;
   display: flex;
   gap: 4px;
-  min-height: 0;
+  width: min(100%, 1100px);
+  margin-top: .6rem;
   align-items: stretch;
 }
 .rail-seg {
@@ -338,9 +366,9 @@ h1 {
 .rail-seg.on span { color: var(--gold); }
 
 .controls {
-  grid-area: controls;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
 }
 .ctrl button, .file-btn {
@@ -357,18 +385,18 @@ h1 {
   outline-offset: 2px;
 }
 
-.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: .8rem; max-width: 920px; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: .8rem; width: min(100%, 720px); }
 .opt {
   background: rgba(25, 54, 155, .55);
   color: white;
   box-shadow: inset 0 0 0 2px rgba(120, 150, 230, .4);
-  text-align: left;
+  text-align: center;
   font-size: clamp(16px, 1.8vw, 26px);
   padding: .75rem .9rem;
 }
 .opt.right { background: rgba(61, 219, 143, .25); box-shadow: inset 0 0 0 2px var(--grow); }
 .opt.wrong { background: rgba(255, 93, 74, .2); box-shadow: inset 0 0 0 2px var(--stop); }
-.scores { display: flex; flex-wrap: wrap; gap: 8px; margin-top: .8rem; }
+.scores { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: .8rem; }
 .table-btn {
   background: transparent;
   color: white;
@@ -432,15 +460,10 @@ h1 {
 
 @media (max-width: 860px) {
   body { overflow: auto; }
-  .board, .run { height: auto; min-height: 100%; }
-  .board {
-    grid-template-columns: 1fr;
-    grid-template-areas: "top" "hero" "list" "foot";
-  }
-  .run {
-    grid-template-columns: 1fr;
-    grid-template-areas: "top" "bell" "stage" "rail" "controls";
-  }
-  .clock, .bell-panel .clock { font-size: clamp(64px, 22vw, 140px); }
+  .shell { height: auto; min-height: 100%; }
+  .top { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .when { text-align: center; }
+  .columns { grid-template-columns: 1fr; }
+  .clock { font-size: clamp(64px, 22vw, 140px); }
   .opts { grid-template-columns: 1fr; }
 }

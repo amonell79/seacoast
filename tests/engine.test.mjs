@@ -4,11 +4,13 @@ import test from "node:test";
 import {
   formatDuration,
   meetingsOn,
+  occurrenceKey,
   paceSegments,
   parsePretend,
   periodBlock,
   pickOnAir,
   playlistFor,
+  screenFor,
   resolvedBells,
   schoolParts,
   shiftParts,
@@ -144,17 +146,22 @@ test("Thursday chapel shortens HS and moves MS, then the lab visits", () => {
   assert.equal(liveClass("2026-11-05T12:20").subject, "Computer lab");
 });
 
-test("Friday King and Rogers stay flagged until the swap is confirmed", () => {
-  const king = liveClass("2026-11-06T10:50");
-  assert.equal(king.classId, "e-6b-king");
-  assert.equal(king.end, "11:15");
-  assert.equal(king.needsConfirmation, true);
-
-  const rogers = liveClass("2026-11-06T11:40");
+test("Friday Rogers is 10:35–11:15 and King is 11:30–12:05", () => {
+  assert.equal(onAir("2026-11-06T10:32").air.phase, "between");
+  const rogers = liveClass("2026-11-06T10:40");
   assert.equal(rogers.classId, "e-5a-rogers");
-  assert.equal(rogers.end, "12:05");
-  assert.equal(rogers.subject, "STEAM lab");
-  assert.equal(rogers.needsConfirmation, true);
+  assert.equal(rogers.start, "10:35");
+  assert.equal(rogers.end, "11:15");
+  assert.equal(rogers.subject, "STEAM");
+  assert.equal(rogers.needsConfirmation, false);
+  assert.equal(onAir("2026-11-06T10:40").air.endsIn, 35 * 60);
+
+  const king = liveClass("2026-11-06T11:40");
+  assert.equal(king.classId, "e-6b-king");
+  assert.equal(king.start, "11:30");
+  assert.equal(king.end, "12:05");
+  assert.equal(king.needsConfirmation, false);
+  assert.equal(onAir("2026-11-06T11:40").air.endsIn, 25 * 60);
 
   assert.equal(liveClass("2026-11-06T09:55").classId, "e-1a-lesnick");
   assert.equal(liveClass("2026-11-06T12:20").classId, "e-4b-brisolara");
@@ -200,9 +207,10 @@ test("example overrides stay off until the flag is removed", () => {
   assert.equal(onAir("2026-12-18T09:55", { includeExamples: true }).air.live.classId, "e-1a-lesnick");
   assert.equal(onAir("2026-12-18T08:10", { includeExamples: true }).air.live.end, "08:50");
 
-  const trip = onAir("2026-11-13T11:40", { includeExamples: true });
+  const trip = onAir("2026-11-13T10:50", { includeExamples: true });
   assert.equal(trip.air.live, null);
   assert.equal(trip.meetings.some((meeting) => meeting.classId === "e-5a-rogers"), false);
+  assert.equal(onAir("2026-11-13T11:40", { includeExamples: true }).air.live.classId, "e-6b-king");
   assert.equal(onAir("2026-11-13T09:55", { includeExamples: true }).air.live.classId, "e-1a-lesnick");
 
   const closed = onAir("2026-11-26T08:10", { includeExamples: true });
@@ -260,6 +268,70 @@ test("a late start comes out of the flex block and still ends on the bell", () =
     assert.equal(paced.reduce((total, segment) => total + segment.seconds, 0), available);
     assert.ok(paced.every((segment) => segment.seconds >= 0));
   }
+});
+
+test("the TV waits at the bell, then runs only after Class Started", () => {
+  const ymd = "2026-11-02";
+  const seen = [];
+  let last = "";
+  for (let second = 7 * 3600 + 50 * 60; second <= 13 * 3600; second += 60) {
+    const parts = { ymd, weekday: "mon", daySeconds: second };
+    const { meetings } = meetingsOn(parts, schedule, classes);
+    const air = pickOnAir(second, meetings);
+    const screen = screenFor(parts, air, null);
+    if (air.phase === "class") {
+      assert.equal(screen.mode, "waiting");
+      assert.equal(screen.endsIn, air.live.endSec - second);
+      const running = screenFor(parts, air, occurrenceKey(ymd, air.live));
+      assert.equal(running.mode, "running");
+      assert.equal(running.key, screen.key);
+    } else {
+      assert.equal(screen.mode, "idle");
+    }
+    const tag = `${screen.mode}:${screen.meeting?.classId || screen.nextClass?.classId || "done"}`;
+    if (tag !== last) {
+      seen.push(tag);
+      last = tag;
+    }
+  }
+  assert.deepEqual(seen, [
+    "idle:hs-stem",
+    "waiting:hs-stem",
+    "idle:ms-stem",
+    "waiting:ms-stem",
+    "idle:e-3a-marsh",
+    "waiting:e-3a-marsh",
+    "idle:e-5b-richards",
+    "waiting:e-5b-richards",
+    "idle:e-1b-mclean",
+    "waiting:e-1b-mclean",
+    "idle:e-2b-felix",
+    "waiting:e-2b-felix",
+    "idle:done",
+  ]);
+});
+
+test("Thursday chapel is an idle gap that counts down to the next class", () => {
+  const parts = at("2026-11-05T09:00");
+  const { meetings } = meetingsOn(parts, schedule, classes);
+  const air = pickOnAir(parts.daySeconds, meetings);
+  const screen = screenFor(parts, air, "leftover-from-hs");
+  assert.equal(screen.mode, "idle");
+  assert.equal(screen.chapel.title, "MS/HS chapel");
+  assert.equal(screen.nextClass.classId, "ms-stem");
+  assert.equal(screen.nextClass.start, "09:30");
+  assert.equal(screen.startsIn, 30 * 60);
+});
+
+test("Class Started refits a late period onto the bell", () => {
+  const segments = tuesday.classes["hs-stem"].segments;
+  const onTime = paceSegments(segments, 50 * 60, 50 * 60);
+  const late = paceSegments(segments, 30 * 60, 50 * 60);
+  const sum = (list) => list.reduce((total, segment) => total + segment.seconds, 0);
+  assert.equal(sum(onTime), 50 * 60);
+  assert.equal(sum(late), 30 * 60);
+  const flex = (list) => list.find((segment) => segment.flex).seconds;
+  assert.ok(flex(late) < flex(onTime));
 });
 
 test("a date file replaces that class and leaves the others on the default", () => {
