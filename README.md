@@ -2,21 +2,30 @@
 
 Classroom screen for Tony Monell's K–12 STEM and STEAM classes at Seacoast Christian Academy. The TV reads the bell schedule, finds the class that is on, and counts down to the **end** of that period. Classes start late. They still end on the bell.
 
-Open the site root on the classroom TV. Nothing here needs a build.
+Open `/` (or `/display/`) on the classroom TV. Open `/teacher/` on your laptop. Nothing here needs a build.
 
 ```bash
 python3 -m http.server 8765
 ```
 
-Then open `http://localhost:8765/`. `npm test` runs the schedule checks.
+Then open `http://localhost:8765/` and `http://localhost:8765/teacher/`. `npm test` runs the schedule and sync checks.
+
+The TV stays up all day by itself. Space or Enter on the TV starts the class. The teacher page can start it, move between parts, and extend the current part.
 
 Preview any moment without changing the computer clock:
 
 - `?now=2026-11-05T09:00` — Thursday chapel
-- `?now=2026-11-03T08:20` — Tuesday HS STEM, started late
-- `?autostart=0` — stay on the day board
-- `?part=3` — open that segment
+- `?now=2026-11-03T08:00` — Tuesday, waiting for HS STEM
+- `?now=2026-11-03T08:00&started=1` — that class already started
 - `?examples=1` — turn on the sample overrides in `data/schedule.json`
+
+## Two screens
+
+`/` is the student display: the lesson, a small class name, and the countdown to the bell. Waiting looks like “Class starting soon.” There are no buttons on the TV.
+
+`/teacher/` is the console on the laptop: Class Started, today’s list, the segment list (prev, next, skip, extend), notes the TV does not show, and a preview.
+
+On the teacher page, **Open TV display** opens the student screen in a new window. Drag that window onto the 75" TV and press F11. The laptop and the TV are the same computer over HDMI, so they stay in step through the browser. BroadcastChannel carries the commands, and localStorage covers a browser that does not have it. No server is required. A later cross-device transport can be added in `js/cloud.js`. The TV still runs all day if the teacher page is closed.
 
 The countdown is the school clock in `America/New_York`.
 
