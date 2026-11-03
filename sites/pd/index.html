@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seacoast PD &middot; AI with Intention &middot; Session 1</title>
+<link rel="icon" type="image/png" sizes="32x32" href="media/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="media/img/favicon-512.png">
+<link rel="apple-touch-icon" href="media/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0A1440; --navy:#19369B; --navy-mid:#152A72; --navy-edge:#2A47AE;
+    --gold:#FED916; --gold-deep:#C9A800; --chalk:#F2F5FF; --chalk-dim:#8E9CCB;
+    --sky:#6FB4FF; --grow:#3FD18E; --stop:#FF5B4A;
+    --display:'Archivo','Helvetica Neue',Arial,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,'Courier New',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100vh;
+    background:radial-gradient(120% 80% at 50% -10%, #16297A 0%, transparent 60%), var(--navy-deep);
+    color:var(--chalk); font-family:var(--display); -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; align-items:center; padding:24px 16px 80px;
+  }
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+  .frame{width:min(880px,100%)}
+  .brandbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--navy-edge);margin-bottom:18px}
+  /* NOTE: swap this wordmark for the school logo <img> (same base64 as the STEM Session Shell) */
+  .wordmark{font-weight:900;font-size:clamp(15px,2.4vw,22px);letter-spacing:.06em}
+  .wordmark span{color:var(--gold)}
+  .modtag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--chalk-dim);text-align:right;line-height:1.6}
+  .prog{margin-bottom:18px}
+  .prog-rail{height:10px;background:rgba(255,255,255,.09);border-radius:3px;overflow:hidden}
+  .prog-fill{height:100%;width:0%;background:var(--gold);transition:width .4s}
+  .prog-meta{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--chalk-dim);letter-spacing:.08em}
+  .card{background:rgba(21,42,114,.55);border:1px solid var(--navy-edge);border-radius:6px;padding:clamp(20px,4vw,40px);backdrop-filter:blur(2px);overflow:hidden}
+  /* step banner art — bleeds to the card edges, fades into the navy */
+  .cbanner{position:relative;height:clamp(110px,18vw,170px);margin:calc(clamp(20px,4vw,40px) * -1) calc(clamp(20px,4vw,40px) * -1) 22px}
+  .cbanner img{width:100%;height:100%;object-fit:cover;display:block}
+  .cbanner::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,20,64,.15) 40%, rgba(21,42,114,.92) 100%)}
+  .brandlogo{height:40px;width:auto;display:block;margin-bottom:6px}
+  .coverimg{float:right;width:clamp(90px,16vw,150px);margin:0 0 12px 18px;border-radius:4px;border:1px solid var(--navy-edge);box-shadow:0 8px 30px rgba(0,0,0,.45)}
+  .steptype{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin:0 auto 14px;display:table;padding:.45em .9em;border-radius:3px;background:rgba(10,20,64,.6);border:1px solid var(--navy-edge)}
+  .card h1{text-align:center}
+  .steptype.avatar{color:var(--gold)} .steptype.read{color:var(--sky)} .steptype.notebook{color:var(--gold)}
+  .steptype.capture{color:var(--grow)} .steptype.form{color:var(--grow)} .steptype.ai{color:var(--sky)}
+  .steptype.check{color:var(--chalk)} .steptype.done{color:var(--gold)}
+  h1{font-size:clamp(22px,4vw,34px);font-weight:900;letter-spacing:-.02em;margin-bottom:.5em;line-height:1.1}
+  .sub{color:var(--chalk-dim);font-size:clamp(14px,1.6vw,17px);line-height:1.6;margin-bottom:1.2em}
+  .body-text{font-size:clamp(15px,1.7vw,18px);line-height:1.65;margin-bottom:1.2em}
+
+  /* ---- MEDIA BANNER (AVATAR vs VOICE labeling) ---- */
+  .vo{background:rgba(10,20,64,.6);border:1px solid var(--navy-edge);border-radius:4px;padding:12px 16px;margin-bottom:18px}
+  .vo-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .vo-badge{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;padding:.5em .9em;border-radius:999px;font-weight:700}
+  .vo-badge.voice{background:rgba(111,180,255,.15);color:var(--sky);border:1px solid var(--sky)}
+  .vo-badge.avatarb{background:rgba(254,217,22,.12);color:var(--gold);border:1px solid var(--gold)}
+  .vo-play,.vo-stop,.vo-cc{background:none;border:1px solid var(--navy-edge);border-radius:3px;color:var(--chalk);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:.55em 1em;cursor:pointer}
+  .vo-play:hover,.vo-stop:hover,.vo-cc:hover{color:var(--gold);border-color:var(--gold)}
+  .vo-cc[aria-pressed="true"]{color:var(--gold);border-color:var(--gold);background:rgba(254,217,22,.1)}
+  .cc-text{margin-top:12px;background:rgba(0,0,0,.35);border-radius:4px;padding:14px 16px;font-size:15px;line-height:1.7;color:var(--chalk)}
+  .slideimgs{display:flex;flex-direction:column;gap:14px;margin:16px 0}
+  .slideimgs img{width:100%;border-radius:5px;border:1px solid var(--navy-edge);display:block}
+  .vo-note{font-family:var(--mono);font-size:10px;color:#5E6FA8;letter-spacing:.06em}
+  .vo details{margin-top:10px}
+  .vo summary{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--chalk-dim);cursor:pointer}
+  .vo .script{font-style:italic;color:var(--chalk-dim);font-size:14px;line-height:1.7;margin-top:8px;border-left:3px solid var(--navy-edge);padding-left:12px}
+
+  /* ---- SLIDE PANEL (progressive reveal) ---- */
+  .slide{background:rgba(10,20,64,.5);border:1px solid var(--navy-edge);border-radius:4px;padding:18px 22px;margin:16px 0}
+  .slide .s-title{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+  .slide ul{list-style:none}
+  .slide li{font-size:clamp(15px,1.8vw,18px);font-weight:700;line-height:1.5;padding:.45em 0 .45em 1.2em;position:relative;opacity:0;transform:translateY(8px);animation:reveal .6s forwards}
+  .slide li::before{content:"";position:absolute;left:0;top:1.05em;width:10px;height:3px;background:var(--gold)}
+  @keyframes reveal{to{opacity:1;transform:none}}
+
+  .pagecall{display:flex;align-items:center;gap:22px;margin:20px 0;flex-wrap:wrap}
+  .pgbox{flex:0 0 auto;text-align:center;background:rgba(10,20,64,.6);border:1px solid var(--sky);border-radius:6px;padding:14px 24px;min-width:130px}
+  .pgbox .pglabel{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--chalk-dim);margin-bottom:6px;white-space:nowrap}
+  .pgbox .pgnum{font-weight:900;font-size:clamp(34px,6vw,54px);color:var(--sky);line-height:1;white-space:nowrap}
+  .pagecall .what{flex:1 1 260px;font-size:clamp(15px,1.8vw,19px);line-height:1.55;max-width:46ch}
+  .avatar-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .avatar-pic{flex:0 0 auto;width:92px;height:92px;border-radius:50%;background:linear-gradient(145deg,var(--gold),var(--gold-deep));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:30px;color:var(--navy-deep);border:3px solid var(--navy-edge)}
+  .avatar-name{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--chalk-dim);text-align:center;margin-top:6px}
+  .bubble{flex:1 1 320px;background:rgba(10,20,64,.65);border:1px solid var(--navy-edge);border-radius:6px;padding:18px 20px;font-size:clamp(15px,1.7vw,17px);line-height:1.65}
+  .vo-video{display:block;width:100%;max-width:820px;margin:12px auto 4px;border-radius:6px;border:1px solid var(--navy-edge);background:#000;box-shadow:0 10px 34px rgba(0,0,0,.45)}
+  .vwrap{position:relative;max-width:820px;margin:0 auto}
+  .vo-wave{display:block;width:100%;height:54px;margin:10px 0 0;border-radius:4px}
+  .vo-tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--chalk-dim);margin-right:4px}
+  .cc-live{margin:10px auto 2px;text-align:center;font-size:17px;line-height:1.5;min-height:30px;color:#fff}
+  .cc-live span{background:rgba(0,0,0,.78);padding:4px 12px;border-radius:3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .cc-overlay{position:absolute;top:22px;right:12px;background:rgba(6,12,40,.75);border:1px solid var(--sky);color:var(--chalk);font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:5px 10px;border-radius:4px;cursor:pointer}
+  .cc-overlay.on{background:var(--sky);color:#08102e;font-weight:700}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--chalk-dim);margin-bottom:.6em}
+  .field input[type=text], .field select, .field textarea{
+    width:100%;background:rgba(10,20,64,.75);border:1px solid var(--navy-edge);border-radius:3px;
+    color:var(--chalk);font-family:var(--display);font-size:16px;font-weight:500;padding:.75em .85em;
+  }
+  .field textarea{min-height:96px;resize:vertical;line-height:1.5}
+  .field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .field input::placeholder,.field textarea::placeholder{color:#5E6FA8}
+  .confirm{display:flex;gap:12px;align-items:flex-start;background:rgba(10,20,64,.5);border:1px solid var(--navy-edge);border-radius:4px;padding:14px 16px;margin:14px 0;cursor:pointer}
+  .confirm input{width:20px;height:20px;accent-color:var(--gold);flex:0 0 auto;margin-top:2px}
+  .confirm span{font-size:15px;line-height:1.5}
+  .nb{border-left:4px solid var(--gold);background:rgba(10,20,64,.5);padding:16px 18px;border-radius:0 4px 4px 0;margin:16px 0}
+  .nb .nb-tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+  .nb .nb-q{font-size:clamp(15px,1.8vw,18px);line-height:1.55;font-weight:700}
+  .nb .nb-hint{font-size:13px;color:var(--chalk-dim);margin-top:8px}
+  .promptbox{position:relative;background:#081030;border:1px solid var(--navy-edge);border-radius:4px;padding:18px;font-family:var(--mono);font-size:13px;line-height:1.7;white-space:pre-wrap;margin:14px 0;max-height:320px;overflow:auto}
+  .copy-btn{float:right;background:var(--gold);border:none;border-radius:3px;color:var(--navy-deep);font-family:var(--display);font-weight:900;font-size:13px;padding:.6em 1.2em;cursor:pointer}
+  ol.steps-list{margin:12px 0 12px 22px;line-height:1.8;font-size:15px}
+  .sum{border:1px solid var(--navy-edge);border-radius:4px;overflow:hidden;margin:14px 0}
+  .sum-row{display:flex;gap:14px;padding:12px 16px;border-bottom:1px solid rgba(42,71,174,.4);font-size:14px}
+  .sum-row:last-child{border-bottom:none}
+  .sum-row .k{flex:0 0 42%;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--chalk-dim);padding-top:2px}
+  .sum-row .v{flex:1;line-height:1.5}
+  .sum-row .v.empty{color:var(--stop);font-style:italic}
+  .evi{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .evi span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:.5em .9em;border-radius:999px;border:1px solid var(--navy-edge);color:var(--chalk-dim)}
+  .evi span.on{border-color:var(--grow);color:var(--grow)}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:12px}
+  .btn{border:none;border-radius:3px;font-family:var(--display);font-weight:900;font-size:16px;padding:.85em 1.6em;cursor:pointer}
+  .btn.primary{background:var(--gold);color:var(--navy-deep)}
+  .btn.primary:hover{background:#FFE246}
+  .btn.ghost{background:none;border:1px solid var(--navy-edge);color:var(--chalk-dim)}
+  .btn.ghost:hover{color:var(--chalk);border-color:var(--chalk-dim)}
+  .mins{font-family:var(--mono);font-size:11px;color:var(--chalk-dim);letter-spacing:.1em}
+  .linkout{display:inline-block;background:var(--sky);color:#06122e;border-radius:3px;font-weight:900;font-size:16px;padding:.8em 1.5em;text-decoration:none;margin:8px 0}
+  .footer-note{margin-top:26px;font-family:var(--mono);font-size:10px;color:#5E6FA8;letter-spacing:.08em;text-align:center;line-height:1.8}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.slide li{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="brandbar">
+    <div>
+      <img class="brandlogo" src="media/img/logo.png" alt="" onerror="this.style.display='none'">
+      <div class="eyebrow">Seacoast Christian Academy &middot; Title II Professional Development</div>
+      <div class="wordmark">AI <span>with Intention</span> &mdash; Book Study</div>
+    </div>
+    <div class="modtag">Session 1 of 2<br>Introduction + Chapter 1</div>
+  </div>
+  <div class="prog" id="prog" hidden>
+    <div class="prog-rail"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-meta"><span id="progStep"></span><span id="progTime"></span></div>
+  </div>
+  <div class="card" id="card"></div>
+  <div class="footer-note">Seacoast PD Walkthrough &middot; Session 1 &middot; progress saves on this computer &mdash; use the same computer Friday to finish</div>
+</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   CONFIG — all content lives here.
+   media.mode: "avatar" = HeyGen avatar VIDEO (use sparingly)
+               "voice"  = ElevenLabs VOICEOVER of Tony's cloned voice (use freely)
+   media.script: the exact line the voice/avatar delivers (feed to ElevenLabs/HeyGen)
+   media.audio:  set to the rendered MP3 URL/path when ready; until then the
+                 Play button uses the browser's best available voice as a preview.
+   reviewMode: true shows badges + scripts on every step (for Tony's review);
+               set false before going live with teachers.
+   ===================================================================== */
+var APP_VERSION = "1.0";
+var CONFIG = {
+  reviewMode: false,
+  /* friendly labels for the checkpoint playback + summaries */
+  keyLabels: {
+    startingPos:"Your starting position on AI",
+    hope:"Your hope", worry:"Your worry",
+    pull1:"Learning vs. reactive — your read",
+    pull2:"The misconception you've seen",
+    expertEdge:"Your expert edge",
+    strategy:"Your principle + action step",
+    strategyClass:"Your class",
+    lessonPlan:"Your lesson plan", judgment:"What you changed and why",
+    reflection:"Your reflection"
+  },
+  aiPlatformName: "Gemini",                    // FINAL 2026-08-04: Google Gemini — teachers' existing school Google accounts, Edu-enabled (Tony verified)
+  aiPlatformUrl:  "https://gemini.google.com",
+  // roster removed 2026-08-05 — teachers type their own name (no dropdown; full list wasn't guaranteed by training day)
+  form: {   // LIVE — "AI with Intention - Book Study - Session 1" on tmonell@scajax.org (created 2026-08-03)
+    base: "https://docs.google.com/forms/d/e/1FAIpQLSdoPeYpp7N4Osvsz-4igiwhnlw5iL9L42vcLszfhrYV7qihcQ/viewform",
+    entries: {
+      name:"entry.952883109", startingPos:"entry.1520964034", hope:"entry.1701156580",
+      worry:"entry.1785325236", pull1:"entry.1536473274", pull2:"entry.2022121968",
+      expertEdge:"entry.487120413", strategy:"entry.1037579537", strategyClass:"entry.1674920473",
+      lessonPlan:"entry.1254112112", judgment:"entry.1745578648", reflection:"entry.1476871062",
+      sessionLog:"entry.412678029"
+      // form also has an optional "Did anything go wrong with the AI tool today?" question
+      // (entry.1482803182) that teachers answer directly in the form — not prefilled.
+    }
+  },
+  steps: [
+    /* ---- 1 ---- */
+    { type:"avatar", mins:2, title:"The battleground", bg:"media/img/bg-framing.jpg",
+      media:{ mode:"avatar", audio:"", video:"media/avatar/av-step01.mp4", captions:"media/avatar/av-step01.vtt?v=6",
+        script:"Hey Seacoast — Mr. Monell here. Well… sort of. I'm the AI version. The real one is making his rounds between classrooms right now, so if you need a human, he's a phone call or an email away. I'm here to show you what's possible with AI. And I know — every conversation about AI in schools starts with worry: cheating, shortcuts, kids letting a machine think for them. Those worries are real, and today doesn't wave them off. But look at the battlefield we're actually on. Our students' attention is being captured — deliberately, skillfully, by feeds and screens built by people that don't have their best interest at heart. And the craft they use? Pacing. Personalization. Instant feedback. Story. Let's be honest: right now, most of that craft is serving evil — it's aimed at hooking our kids, not building them. But the craft itself isn't the sin. Those are teaching principles, and they were borrowed from us. Scripture has seen this pattern before. Joseph looked at the very thing meant to destroy him and said: you intended it for evil, but God intended it for good. That's the assignment. Today we start taking the craft back. You'll read from a real book, write in a real notebook, and yes — you'll use AI yourself, on purpose — so you can lead your students through this instead of chasing after them. Let's begin." },
+      slide:{ title:"Why we're here", bullets:[
+        "Every feed is fighting for your students' attention",
+        "The craft — pacing, feedback, story — was borrowed from teaching",
+        "Today we take it back and use it with intention",
+        "Read &rarr; Notebook &rarr; Build &rarr; Reflect",
+        "Thinking first &mdash; machine second"
+      ]} },
+
+    /* ---- 2 ---- */
+    { type:"start", mins:2, title:"Before we begin", bg:"media/img/bg-arrive.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step02.mp3", captions:"media/vo/vo-step02.vtt?v=4",
+        script:"Before we dive in, let's get you set up. Pick your name so your work gets credited to you, and run down the checklist — book, notebook, pen. Your notebook matters today: everything you think gets handwritten first, and your notes will guide you through the finish. If you're missing anything, it's worth the walk to go grab it now." },
+      materials:["I picked up my physical copy of AI with Intention — it's in my hands right now","My Title II spiral notebook","A pen","I signed the attendance log when I picked up my book"] },
+
+    /* ---- 3 ---- */
+    { type:"read", mins:12, title:"Read the Introduction", bg:"media/img/bg-read.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step03.mp3", captions:"media/vo/vo-step03.vtt?v=3",
+        script:"First job is simple: read. Pages one through six — the Introduction. No notes yet, no highlighting. Just read. Pay attention to what the author says it means to use AI 'with intention' — that phrase is the whole ballgame. And keep an eye out for the two cries for help he says teachers post the most. You might recognize one of them." },
+      pages:"pp. 1–6",
+      what:"Read the Introduction straight through — from the Clay Shirky quote to Figure 1.2. Notice the definition of intentional teaching and learning on page 3, and the two teacher “Help!” questions on page 2.",
+      confirm:"I've finished reading the Introduction" },
+
+    /* ---- 4 ---- */
+    { type:"notebook", mins:5, title:"Notebook — Note 1", bg:"media/img/bg-notebook.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step04.mp3", captions:"media/vo/vo-step04.vtt?v=1",
+        script:"Notebooks out — and they're staying out. Today's date at the top of a fresh page, then start your first note — just write a number one and go. Be honest with yourself: where are you actually starting from with AI — excited, skeptical, somewhere in between — and why? Then add one hope you have for it in your classroom, and one worry. Nobody's grading this. You'll write five numbered notes today, and your notebook is your workspace for the whole session — the typing comes at the end, and these notes will be your guide." },
+      prompt:"Date at the top of a fresh page. Then NOTE 1: your honest starting position on AI (excited / skeptical / in between — and why), one HOPE for your classroom, and one WORRY.",
+      hint:"Page 2 of the book has the two most common teacher cries for help about AI. If one sounds like you, say so.",
+      confirm:"Note 1 is written in my notebook, with today's date" },
+
+    /* ---- 5 ---- */
+    { type:"read", mins:8, title:"Page pull #1 — two kinds of schools", bg:"media/img/hold-expert.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step05.mp3", captions:"media/vo/vo-step05.vtt?v=1",
+        script:"Time for your first page pull. Page nine — the start of chapter one. The author draws a line between a learning organization and a reactive organization. Read it, catch the Jaron Lanier quote at the top, then write note two in your notebook: the difference between the two, in your own words — and one honest line about which way Seacoast leans when new technology shows up." },
+      pages:"p. 9",
+      what:"Read the Chapter 1 opener: the Jaron Lanier quote (“the easiest way to mismanage a technology is to misunderstand it”) and the section “Learning Organizations vs. Reactive Organizations.”",
+      nb:{ prompt:"NOTE 2: learning vs. reactive organizations in your own words — and which way Seacoast leans when new technology shows up." },
+      confirm:"Note 2 is written in my notebook" },
+
+    /* ---- 6 ---- */
+    { type:"read", mins:9, title:"Page pull #2 — the misconceptions", bg:"media/img/hold-five-facts.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step06.mp3", captions:"media/vo/vo-step06.vtt?v=1",
+        script:"Next pull — pages ten through thirteen. The author's first two action steps: understand what A I actually is, and own the misconceptions we all carry. It just predicts the next word. It isn't a person — don't treat it like one. And don't trust it like it can't be wrong — there's a story in there about a G P S leading tourists straight into the ocean. When you find the misconception you've seen in your own room — or in yourself — write it down as note three. Then note four: one thing YOUR expertise gives you that the tool doesn't have. Page fifteen says prompting A I is about domain expertise, not tech expertise. That's you." },
+      pages:"pp. 10–13",
+      what:"Read Action Steps 1 and 2: how large language models actually work (“It's just adding one word at a time”), “Don't Anthropomorphize Technology,” Figure 1.1 on the form and function of AI, and “Avoid Automation Bias” (the GPS-into-the-ocean story).",
+      nb:{ prompt:"NOTE 3: the misconception you've seen most (treating AI like a person / trusting it blindly / calling it all good or all bad) — and where. NOTE 4: one thing YOUR subject expertise gives you that the tool doesn't (see p. 15)." },
+      confirm:"Notes 3 and 4 are written in my notebook" },
+
+    /* ---- 7 ---- */
+    { type:"read", mins:9, title:"Page pull #3 — choose your principle", bg:"media/img/hold-qualified.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step07.mp3", captions:"media/vo/vo-step07.vtt?v=1",
+        script:"Last pull, and it's the big one. Flip back to page six — figure one point two, the four guiding principles for teachers. Stand in their shoes. Know your purpose. Prompt intentionally. Use A I for intentional learning. Skim all four rows, then choose the one principle you will actually try with a real class this semester — and one action step from its row. Write it as note five: your principle, your action step, and the class. This choice becomes your lesson plan, so pick something you mean." },
+      pages:"p. 6",
+      what:"Study Figure 1.2 — the four teacher guiding principles: Stand in Their Shoes &middot; Know Your Purpose &middot; Prompt AI Tools Intentionally &middot; Use AI Tools for Intentional Learning. Pick ONE principle and ONE action step from its row that you'll try this semester.",
+      nb:{ prompt:"NOTE 5: your principle + one action step from its row + the class you'll try it with." },
+      confirm:"Note 5 is written in my notebook" },
+
+    /* ---- 8 ---- */
+    { type:"info", mins:1, title:"Notebook to keyboard", bg:"media/img/bg-discuss.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step08.mp3", captions:"media/vo/vo-step08.vtt?v=1",
+        script:"Close the book and look at your notebook. Five numbered notes — all your own thinking, in your own handwriting. That's your training notes, and it's also your guide for everything left. On the next two screens, type up those notes. Don't polish them, don't rewrite them — just transcribe. The notes lead; the keyboard follows." },
+      text:"Your five notes are written — that's the thinking. Now they become the typed record. On the next two screens, transcribe your notes exactly as you wrote them. Your notebook stays open beside you as the guide." },
+
+    /* ---- 9 ---- */
+    { type:"capture", mins:5, title:"From your notebook — Notes 1 and 2", bg:"media/img/bg-form.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step09.mp3", captions:"media/vo/vo-step09.vtt?v=1",
+        script:"Notebook open beside the keyboard. Start with note one — your starting position, your hope, your worry — then note two. Type them just the way you wrote them." },
+      intro:"Transcribe from your notebook — as written, no polishing.",
+      fields:[
+        {key:"startingPos", label:"Note 1 — your starting position on AI", multiline:true, ph:"as written in your notebook"},
+        {key:"hope",  label:"Note 1 — your hope", multiline:false, ph:""},
+        {key:"worry", label:"Note 1 — your worry", multiline:false, ph:""},
+        {key:"pull1", label:"Note 2 — learning vs. reactive, in your own words", multiline:true, ph:""}
+      ] },
+
+    /* ---- 10 ---- */
+    { type:"capture", mins:6, title:"From your notebook — Notes 3, 4, and 5", bg:"media/img/bg-form.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step10.mp3", captions:"media/vo/vo-step10.vtt?v=1",
+        script:"Now notes three, four, and five — the misconception you've seen, your expert edge, and the principle and class you chose. When these are in, everything your lesson plan needs is on board." },
+      intro:"Transcribe from your notebook — as written.",
+      fields:[
+        {key:"pull2", label:"Note 3 — the misconception you've seen, and where", multiline:true, ph:""},
+        {key:"expertEdge", label:"Note 4 — what your expertise gives you that the tool doesn't", multiline:false, ph:""},
+        {key:"strategy", label:"Note 5 — your principle + action step (name them the way the book does)", multiline:true, ph:"e.g., Know Your Purpose — emphasize purpose for learning, not compliance"},
+        {key:"strategyClass", label:"Note 5 — the class / subject / grade you'll try it with", multiline:false, ph:"e.g., 4th grade science"}
+      ] },
+
+    /* ---- 11 ---- */
+    { type:"checkpoint", mins:2, title:"Everything here came from you", bg:"media/img/bg-discuss.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step11.mp3", captions:"media/vo/vo-step11.vtt?v=1",
+        script:"Stop and look at what you've built. Your starting position. Your read on what kind of school we want to be. The misconception you've seen with your own eyes. Your expert edge. A principle and a class you chose. Every word on this screen started in your handwriting, not in a machine. That's the raw material. Now let's put the machine to work on it." },
+      text:"Five notes, transcribed. This is the raw material for your lesson plan — all of it yours. Next: hand it to an AI and watch the formatting happen at machine speed while the thinking stays human.",
+      show:["startingPos","pull1","pull2","expertEdge","strategy","strategyClass"] },
+
+    /* ---- 12 ---- */
+    { type:"avatar", mins:1, title:"The division of labor", bg:"media/img/bg-build.jpg",
+      media:{ mode:"avatar", audio:"", video:"media/avatar/av-step12.mp4", captions:"media/avatar/av-step12.vtt?v=1",
+        script:"This is the moment today has been building toward. You've read. You've thought on paper. You've picked a principle for a real class. Now you hand your thinking — YOUR thinking — to an A I, and watch it do the formatting, the structuring, the busywork, while you keep the judgment. That's the division of labor: you bring the purpose, it brings the speed. Paul prayed in Philippians one that our love would abound more and more in knowledge and depth of insight — so that we could discern what is best. That's the whole job with this tool: discernment. That's what using it with intention actually looks like. Follow the steps on the next screen exactly, and bring the result back here." },
+      slide:{ title:"The deal", bullets:[
+        "You bring: judgment, context, purpose",
+        "AI brings: speed, structure, drafts",
+        "It drafts &mdash; you decide",
+        "“Discern what is best” &mdash; Philippians 1:9–10"
+      ]} },
+
+    /* ---- 13 ---- */
+    { type:"ai", mins:12, title:"Build your lesson plan with AI", bg:"media/img/hold-not-cheating.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step13.mp3", captions:"media/vo/vo-step13.vtt?v=2",
+        script:"Open the platform — the steps are on your table card. Then hit Copy: the prompt below is already loaded with your five notes. Paste it in and read what comes back. Then push back on it — make it shorter, make it fit your room, swap what doesn't sound like you. You're the teacher. It's the assistant." },
+      steps:[
+        "Open [PLATFORM] with the button below. If it asks you to sign in, use your SCHOOL Google account — same login as your school email, nothing new to create.",
+        "First time in, [PLATFORM] may show a welcome screen or two — just click through them.",
+        "Click Copy below — it copies a prompt already filled with YOUR five notes — then paste it into the message box and send.",
+        "Read what [PLATFORM] gives you. <b>Don't like something? Just tell it what to change</b> — type things like “make it shorter,” “fewer devices,” “add a group activity,” “make the opening simpler.” It will rewrite the plan every time you ask. Keep going until it's YOUR plan.",
+        "Happy with it? <b>Click the Copy icon (&#10064;) at the bottom of [PLATFORM]'s reply</b> — that copies the whole plan in one click. (See the picture on your table card.)",
+        "Come back to THIS tab and click Continue — you'll paste the plan on the very next screen."
+      ],
+      promptTemplate:
+"You are helping a teacher at a K-12 Christian school write a practical lesson plan.\n\nMy class: {{strategyClass}}\n\nFrom the book \"AI with Intention\" by Tony Frontier, I am applying this guiding principle and action step: {{strategy}}\n\nContext from my reading, in my own words:\n- What kind of school we want to be: {{pull1}}\n- A misconception about AI I want to counter: {{pull2}}\n- What my subject expertise gives me that the tool doesn't: {{expertEdge}}\n- My honest starting position on AI: {{startingPos}}\n\nWrite a single-lesson plan that integrates this principle, with: a learning objective, materials, a step-by-step sequence (opening, main activity, closing), and a short note on how the AI element supports intentional learning rather than shortcut compliance. Keep it to one page and make it realistic for my class." },
+
+    /* ---- 14 ---- */
+    { type:"capture", mins:6, title:"Bring it back", bg:"media/img/bg-form.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step14.mp3", captions:"media/vo/vo-step14.vtt?v=1",
+        script:"Paste your finished plan below. Then fill in the box that matters most: what did you change, what did you keep, and why. That one line is the proof that the plan is yours — the A I drafted it, but you decided." },
+      intro:"Click in the first box below and paste (Ctrl+V) the plan you copied from Gemini. Then the judgment line — the most important box on this page.",
+      fields:[
+        {key:"lessonPlan", label:"Paste your AI-built lesson plan here (click the box, then Ctrl+V)", multiline:true, ph:"right-click → Paste also works"},
+        {key:"judgment", label:"What did you change or keep, and why? (1–2 lines)", multiline:true, ph:"e.g., I cut the tech-heavy opener — my room only has 4 devices — and kept the exit ticket."}
+      ] },
+
+    /* ---- 15 ---- */
+    { type:"capture", mins:5, title:"Your reflection — your words", bg:"media/img/bg-reflect.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step15.mp3", captions:"media/vo/vo-step15.vtt?v=1",
+        script:"Last piece, and this one stays one hundred percent you — no A I on this one. Look back at note one in your notebook — where you started this afternoon. A few honest sentences: how will you use what you learned today in your classroom? And did you move at all from where you started?" },
+      intro:"No AI on this one — it stays entirely yours. Glance back at Note 1 before you write.",
+      fields:[
+        {key:"reflection", label:"How do you intend to apply what you learned today? Did your starting position (Note 1) move at all?", multiline:true, ph:""}
+      ] },
+
+    /* ---- 16 ---- */
+    { type:"form", mins:3, title:"Submit your work", bg:"media/img/bg-form.jpg",
+      media:{ mode:"voice", audio:"media/vo/vo-step16.mp3", captions:"media/vo/vo-step16.vtt?v=3",
+        script:"One click left. This opens your Google Form with everything you typed already filled in. Read it over and press Submit — the moment you do, your work goes straight to Mr. Monell. A copy lands in your school email too, just for your records. Friday, your packet will be waiting — all you'll do is sign it." },
+      text:"This opens your Google Form with everything you typed already filled in. Review it, then press Submit. Your work goes to Mr. Monell automatically — a copy also lands in your school email for your records.",
+      confirm:"I reviewed the form and pressed Submit" },
+
+    /* ---- 17 ---- */
+    { type:"done", title:"Session 1 complete", bg:"media/img/bg-folders.jpg",
+      media:{ mode:"avatar", audio:"", video:"media/avatar/av-step17.mp4", captions:"media/avatar/av-step17.vtt?v=2",
+        script:"That's session one. And here's the best part: once you hit Submit, I have everything I need — there's nothing to print, nothing to email, nothing else to do. Just two easy things on Friday. Hold on to your notebook with your notes in it — I'll come around and pick it up. And I'll bring you a printed copy of your lesson plan and reflection, and you'll just sign it. That's it. Session two, we go deeper — the teacher chapters: standing in your students' shoes, prompting with purpose, and teaching kids to use these tools with agency instead of dependence. Thank you for completing this training — and for the time and heart you put into it. See you there.",
+        },
+      text:"Once you hit Submit, Mr. Monell has everything he needs. Friday, two easy things: he'll come around to pick up your notebook (leave your notes in it), and he'll bring a printed copy of your lesson plan and reflection for you to sign. Keep your book — Session 2 continues into the teacher chapters (Part 2), and you'll be back in its pages.",
+      unfinished:"Not finished? No problem — close this tab and reopen it on THIS computer during Friday's window. You'll land right where you left off." }
+  ]
+};
+
+/* =====================================================================
+   ENGINE — no content below this line.
+   ===================================================================== */
+var store = {
+  get:function(){ try{ return JSON.parse(localStorage.getItem("scapd_s1")||"{}"); }catch(e){ return this._m||{}; } },
+  set:function(s){ try{ localStorage.setItem("scapd_s1", JSON.stringify(s)); }catch(e){ this._m=s; } }
+};
+var state = store.get();
+if(state.i === undefined) state = { i:-1, a:{} };
+/* open the link with ?reset to wipe saved progress and start fresh (testing / troubleshooting) */
+try{ if(/[?&]reset\b/.test(location.search)){ state = { i:-1, a:{} }; localStorage.removeItem("scapd_s1"); history.replaceState(null,"",location.pathname); } }catch(e){}
+/* interaction tracking: t.start = first-begin timestamp, t.steps = active seconds per step,
+   t.plays = voiceover play presses, t.maxI = furthest step reached, t.done = finish timestamp */
+if(!state.t) state.t = { start:0, steps:{}, plays:0, maxI:0, done:0 };
+
+var enterTs = Date.now();
+var STEP_CAP = 30*60;   // cap counted time at 30 min/step so an idle overnight tab doesn't distort
+function tickStepTime(){
+  if(state.i>=0){
+    var secs=Math.min(Math.round((Date.now()-enterTs)/1000), STEP_CAP);
+    state.t.steps[state.i]=(state.t.steps[state.i]||0)+secs;
+  }
+  enterTs=Date.now();
+}
+function activeMins(){
+  var s=0; Object.keys(state.t.steps).forEach(function(k){ s+=state.t.steps[k]; });
+  return Math.round(s/60);
+}
+function fmtTs(ms){
+  if(!ms) return "—";
+  var d=new Date(ms);
+  return (d.getMonth()+1)+"/"+d.getDate()+" "+d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+}
+function sessionLog(){
+  return "S1 v"+APP_VERSION+" | started "+fmtTs(state.t.start)
+    +" | finished "+fmtTs(state.t.done)
+    +" | active ~"+activeMins()+" min"
+    +" | furthest step "+(state.t.maxI+1)+"/"+CONFIG.steps.length
+    +" | voiceover plays "+state.t.plays;
+}
+
+function save(){ store.set(state); }
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+function ans(k){ return (state.a[k]||"").trim(); }
+
+/* Title Case for step headings — small words stay lowercase unless they lead */
+var SMALL_WORDS = {a:1,an:1,and:1,as:1,at:1,but:1,by:1,"for":1,from:1,"in":1,of:1,on:1,or:1,the:1,to:1,"with":1,we:0};
+function titleCase(str){
+  var words = str.split(" ");
+  return words.map(function(w,i){
+    var prev = i>0 ? words[i-1] : "";
+    var lead = (i===0) || prev==="—" || prev==="-";
+    var bare = w.toLowerCase();
+    if(!lead && SMALL_WORDS[bare]===1) return bare;
+    if(/^[#\d]/.test(w)) return w;                       // "#1", "1" untouched
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(" ");
+}
+
+var totalMins = CONFIG.steps.reduce(function(s,x){ return s+(x.mins||0); },0);
+
+/* ---- natural-ish TTS voice picker (preview only; ElevenLabs replaces this) ---- */
+var PICKED_VOICE=null;
+function pickVoice(){
+  try{
+    var vs=speechSynthesis.getVoices().filter(function(v){ return /^en/i.test(v.lang); });
+    if(!vs.length) return;
+    var prefs=[/multilingual/i,/neural/i,/natural/i,/premium/i,/enhanced/i,/Google US English/i,/Aria/i,/Andrew/i,/Christopher/i,/Guy/i,/Samantha/i,/Alex/i];
+    for(var p=0;p<prefs.length;p++){
+      var hit=vs.find(function(v){ return prefs[p].test(v.name); });
+      if(hit){ PICKED_VOICE=hit; return; }
+    }
+    PICKED_VOICE=vs[0];
+  }catch(e){}
+}
+try{ speechSynthesis.onvoiceschanged=pickVoice; pickVoice(); }catch(e){}
+
+/* ---- media player with pause/resume ---- */
+var player={ audio:null, mode:null, status:"idle", btn:null };
+function setPlayBtn(txt){ if(player.btn) player.btn.innerHTML=txt; }
+
+/* ---- live waveform (Web Audio analyser for real audio; animated bars for TTS preview) ---- */
+var wave={ ctx:null, analyser:null, raf:0 };
+function waveSize(c){
+  var dpr=window.devicePixelRatio||1;
+  c.width=Math.max(1,c.offsetWidth*dpr); c.height=54*dpr;
+  return {g:c.getContext("2d"), W:c.width, H:c.height, N:56};
+}
+function wavePaintIdle(){
+  var c=el("voWave"); if(!c) return;
+  var s=waveSize(c), bw=s.W/s.N;
+  s.g.clearRect(0,0,s.W,s.H);
+  for(var i=0;i<s.N;i++){
+    var v=0.10+0.10*Math.abs(Math.sin(i*0.7));
+    var h1=v*s.H, x=i*bw+bw*0.25, y=(s.H-h1)/2;
+    s.g.fillStyle="rgba(142,156,203,.45)";
+    s.g.fillRect(x,y,bw*0.5,h1);
+  }
+}
+function waveStart(isTTS){
+  var c=el("voWave"); if(!c) return;
+  var s=waveSize(c), bw=s.W/s.N;
+  var freq=null;
+  if(!isTTS){
+    try{
+      if(!wave.ctx) wave.ctx=new (window.AudioContext||window.webkitAudioContext)();
+      if(wave.ctx.resume) wave.ctx.resume();
+      wave.analyser=wave.ctx.createAnalyser();
+      wave.analyser.fftSize=128; wave.analyser.smoothingTimeConstant=0.75;
+      var src=wave.ctx.createMediaElementSource(player.audio);
+      src.connect(wave.analyser); wave.analyser.connect(wave.ctx.destination);
+      freq=new Uint8Array(wave.analyser.frequencyBinCount);
+    }catch(e){ wave.analyser=null; isTTS=true; }   // fall back to animated bars
+  }
+  var phase=0;
+  cancelAnimationFrame(wave.raf);
+  (function draw(){
+    wave.raf=requestAnimationFrame(draw);
+    var playing=player.status==="playing";
+    s.g.clearRect(0,0,s.W,s.H);
+    if(playing && !isTTS && wave.analyser) wave.analyser.getByteFrequencyData(freq);
+    for(var i=0;i<s.N;i++){
+      var v;
+      if(!playing) v=0.10+0.10*Math.abs(Math.sin(i*0.7));
+      else if(!isTTS && wave.analyser) v=Math.max(0.06, freq[Math.floor(i*freq.length*0.75/s.N)]/255);
+      else { phase+=0.00045; v=0.12+0.6*Math.abs(Math.sin(i*0.53+phase*95))*Math.abs(Math.sin(phase*41+i*0.9)); }
+      var h1=Math.max(s.H*0.06, v*s.H*0.92);
+      var x=i*bw+bw*0.25, y=(s.H-h1)/2;
+      s.g.fillStyle = playing ? (i%7===3 ? "#6FB4FF" : "#FED916") : "rgba(142,156,203,.45)";
+      s.g.fillRect(x,y,bw*0.5,h1);
+    }
+  })();
+}
+function waveStop(){
+  cancelAnimationFrame(wave.raf); wave.raf=0; wave.analyser=null;
+  wavePaintIdle();
+}
+
+/* ---- live caption line for audio steps (VTT fetched + synced to timeupdate) ---- */
+var ccCache={};
+function loadCues(url,cb){
+  if(ccCache[url]) return cb(ccCache[url]);
+  fetch(url).then(function(r){return r.text();}).then(function(t){
+    var cues=[], re=/(\d\d):(\d\d):(\d\d\.\d{3}) --> (\d\d):(\d\d):(\d\d\.\d{3})[^\n]*\n([\s\S]*?)(?=\n\n|\n*$)/g, m;
+    while((m=re.exec(t))){
+      cues.push({s:(+m[1])*3600+(+m[2])*60+(+m[3]), e:(+m[4])*3600+(+m[5])*60+(+m[6]), t:m[7].trim()});
+    }
+    ccCache[url]=cues; cb(cues);
+  }).catch(function(){ cb([]); });
+}
+function attachCcSync(media){
+  loadCues(media.captions,function(cues){
+    if(!player.audio||!cues.length) return;
+    player.audio.ontimeupdate=function(){
+      var line=el("ccLine"); if(!line||!player.audio) return;
+      var t=player.audio.currentTime, txt="";
+      for(var i=0;i<cues.length;i++){ if(t>=cues[i].s&&t<=cues[i].e){ txt=cues[i].t; break; } }
+      line.innerHTML = txt ? '<span>'+esc(txt)+'</span>' : "&nbsp;";
+    };
+  });
+}
+
+function stopMedia(){
+  if(player.audio){ player.audio.pause(); player.audio=null; }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  player.status="idle"; player.mode=null;
+  setPlayBtn("&#9654; Play");
+  var line=el("ccLine"); if(line) line.innerHTML="&nbsp;";
+  waveStop();
+}
+function toggleMedia(media){
+  if(!media) return;
+  if(player.status==="playing"){
+    if(player.mode==="audio" && player.audio){ player.audio.pause(); }
+    else { try{ speechSynthesis.pause(); }catch(e){} }
+    player.status="paused"; setPlayBtn("&#9654; Resume");
+    return;
+  }
+  if(player.status==="paused"){
+    if(player.mode==="audio" && player.audio){ player.audio.play(); }
+    else { try{ speechSynthesis.resume(); }catch(e){} }
+    player.status="playing"; setPlayBtn("&#10074;&#10074; Pause");
+    return;
+  }
+  // idle → start
+  state.t.plays++; save();
+  if(media.audio){
+    player.audio=new Audio(media.audio);
+    player.audio.crossOrigin="anonymous";
+    player.mode="audio";
+    player.audio.onended=function(){ stopMedia(); };
+    var pp=player.audio.play(); if(pp&&pp.catch) pp.catch(function(){});
+    if(media.captions && state.a.cc==="1") attachCcSync(media);
+    player.status="playing";
+    waveStart(false);
+  } else {
+    try{
+      var u=new SpeechSynthesisUtterance(media.script);
+      if(PICKED_VOICE) u.voice=PICKED_VOICE;
+      u.rate=1; u.pitch=1;
+      u.onend=function(){ if(player.status!=="idle") stopMedia(); };
+      player.mode="tts";
+      speechSynthesis.speak(u);
+    }catch(e){ return; }
+    player.status="playing";
+    waveStart(true);
+  }
+  setPlayBtn("&#10074;&#10074; Pause");
+}
+
+function mediaBanner(media, hideScript){
+  if(!media) return "";
+  var isAvatar = media.mode==="avatar";
+  var badge = isAvatar
+    ? '<span class="vo-badge avatarb">&#9679; AI Avatar &middot; HeyGen video</span>'
+    : '<span class="vo-badge voice">&#9654; AI Voice &middot; ElevenLabs (Mr. M)</span>';
+  /* Rendered avatar video replaces the speech bubble + TTS preview entirely.
+     No badge/header — the video speaks for itself. CC button appears in the
+     player's own controls when a captions track is present. */
+  if(media.video){
+    var ccActive = state.a.cc==="1";
+    var vh='<div class="vo" style="background:none;border:none;padding:0"><div class="vwrap">'
+      +'<video class="vo-video" id="voVideo" controls preload="metadata" playsinline src="'+esc(media.video)+'">'
+      +(media.captions?'<track kind="captions" srclang="en" label="English" src="'+esc(media.captions)+'">':'')
+      +'</video>'
+      +(media.captions?'<button class="cc-overlay'+(ccActive?' on':'')+'" id="ccBtn" aria-pressed="'+(ccActive?"true":"false")+'">CC</button>':'')
+      +'</div>';
+    if(CONFIG.reviewMode){
+      vh+='<details><summary>Script (as recorded) — review mode only, teachers never see this</summary><div class="script">'+esc(media.script)+'</div></details>';
+    }
+    vh+='</div>';
+    return vh;
+  }
+  var ccOn = state.a.cc==="1";
+  /* final audio → slim tag; preview → full badge + note so Tony knows what's missing */
+  var head = media.audio
+    ? '<span class="vo-tag">AI voice &middot; Mr. M</span>'
+    : badge;
+  var h='<div class="vo"><div class="vo-head">'+head
+    +'<button class="vo-play" id="voPlay">&#9654; Play</button>'
+    +'<button class="vo-stop" id="voStop">&#9632; Stop</button>'
+    +(hideScript ? '' : '<button class="vo-cc" id="voCC" aria-pressed="'+(ccOn?"true":"false")+'">CC</button>')
+    +(media.audio ? '' : '<span class="vo-note">preview: browser voice &mdash; final audio pending</span>')
+    +'</div>';
+  h+='<canvas class="vo-wave" id="voWave" aria-hidden="true"></canvas>';
+  // Captions: live line-by-line when a timed track exists, else full script text.
+  if(!hideScript && ccOn){
+    if(media.captions) h+='<div class="cc-live" id="ccLine">&nbsp;</div>';
+    else h+='<div class="cc-text" id="ccText">'+esc(media.script)+'</div>';
+  }
+  if(CONFIG.reviewMode && !hideScript && !ccOn){
+    h+='<details open><summary>Script (for '+(isAvatar?"HeyGen render":"ElevenLabs render")+')</summary><div class="script">'+esc(media.script)+'</div></details>';
+  }
+  h+='</div>';
+  return h;
+}
+function bindMedia(media){
+  stopMedia();                                 // leaving a step always stops its audio
+  if(media && media.video){
+    var v=el("voVideo");
+    if(v){
+      v.onplay=function(){ if(!v._counted){ v._counted=true; state.t.plays++; save(); } };
+      var applyCC=function(){ if(v.textTracks&&v.textTracks[0]) v.textTracks[0].mode=(state.a.cc==="1")?"showing":"hidden"; };
+      applyCC();
+      var tr=v.querySelector("track"); if(tr) tr.addEventListener("load",applyCC);
+      var cb=el("ccBtn");
+      if(cb) cb.onclick=function(){
+        state.a.cc=(state.a.cc==="1")?"":"1"; save();
+        applyCC();
+        cb.classList.toggle("on", state.a.cc==="1");
+        cb.setAttribute("aria-pressed", state.a.cc==="1"?"true":"false");
+      };
+    }
+    return;
+  }
+  player.btn=el("voPlay");
+  if(player.btn) player.btn.onclick=function(){ toggleMedia(media); };
+  var s=el("voStop"); if(s) s.onclick=function(){ stopMedia(); };
+  var c=el("voCC");
+  if(c) c.onclick=function(){
+    state.a.cc = (state.a.cc==="1") ? "" : "1";   // preference sticks for the whole session
+    save(); render();
+  };
+  wavePaintIdle();
+}
+function bannerHtml(src){
+  if(!src) return "";
+  return '<div class="cbanner"><img src="'+esc(src)+'" alt="" onerror="this.parentElement.style.display=\'none\'"></div>';
+}
+function imgsHtml(imgs){
+  if(!imgs||!imgs.length) return "";
+  var h='<div class="slideimgs">';
+  imgs.forEach(function(src){ h+='<img src="'+esc(src)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">'; });
+  return h+'</div>';
+}
+
+function slideHtml(slide){
+  if(!slide) return "";
+  var h='<div class="slide"><div class="s-title">'+esc(slide.title)+'</div><ul>';
+  slide.bullets.forEach(function(b,i){
+    h+='<li style="animation-delay:'+(0.5+i*1.1)+'s">'+b+'</li>';   // progressive reveal
+  });
+  h+='</ul></div>';
+  return h;
+}
+
+function fill(t){
+  return t.replace(/\{\{(\w+)\}\}/g, function(_,k){ return ans(k)||"["+k+" — not filled in yet]"; });
+}
+function prefillUrl(){
+  tickStepTime();   // fold in time on the current step before reporting
+  var e=CONFIG.form.entries, parts=[];
+  function add(id,val){ if(id&&val) parts.push(id+"="+encodeURIComponent(val)); }
+  add(e.name, ans("teacherName"));
+  Object.keys(e).forEach(function(k){ if(k!=="name"&&k!=="sessionLog") add(e[k], ans(k)); });
+  add(e.sessionLog, sessionLog());
+  return CONFIG.form.base + "?usp=pp_url&" + parts.join("&");
+}
+function minsLeft(fromIdx){ var m=0; for(var i=fromIdx;i<CONFIG.steps.length;i++) m+=CONFIG.steps[i].mins||0; return m; }
+function renderProgress(idx){
+  var p=el("prog");
+  if(idx<0){ p.hidden=true; return; }   // visible from screen 1 on, so support calls can reference "Step X of 15"
+  p.hidden=false;
+  var done=0; for(var i=0;i<idx;i++) done+=CONFIG.steps[i].mins||0;
+  el("progFill").style.width=Math.round(done/totalMins*100)+"%";
+  el("progStep").textContent="Step "+(idx+1)+" of "+CONFIG.steps.length;
+  el("progTime").textContent="about "+minsLeft(idx)+" min left";
+}
+function navHtml(step,canBack){
+  return '<div class="nav">'
+    +(canBack?'<button class="btn ghost" id="backBtn">Back</button>':'<span></span>')
+    +'<span class="mins">'+(step.mins?("~"+step.mins+" min"):"")+'</span>'
+    +'<button class="btn primary" id="nextBtn">Continue</button></div>';
+}
+function bindNav(validate){
+  var b=el("backBtn"); if(b) b.onclick=function(){ tickStepTime(); state.i--; save(); render(); window.scrollTo(0,0); };
+  el("nextBtn").onclick=function(){
+    if(validate && !validate()) return;
+    tickStepTime();
+    state.i++;
+    if(state.i>state.t.maxI) state.t.maxI=state.i;
+    if(state.i>=CONFIG.steps.length-1 && !state.t.done) state.t.done=Date.now();
+    save(); render(); window.scrollTo(0,0);
+  };
+}
+function confirmHtml(id,label){
+  var checked = state.a["chk_"+state.i+"_"+id]==="1";
+  return '<label class="confirm"><input type="checkbox" id="'+id+'"'+(checked?' checked':'')+'><span>'+esc(label)+'</span></label>';
+}
+function requireChecks(ids){
+  return function(){
+    var ok=true;
+    ids.forEach(function(id){ var c=el(id); if(c&&!c.checked){ c.parentElement.style.borderColor="var(--stop)"; ok=false; } });
+    return ok;
+  };
+}
+function fieldHtml(f){
+  var v=esc(ans(f.key));
+  if(f.multiline) return '<div class="field"><label>'+esc(f.label)+'</label><textarea data-key="'+f.key+'" placeholder="'+esc(f.ph||"")+'">'+v+'</textarea></div>';
+  return '<div class="field"><label>'+esc(f.label)+'</label><input type="text" data-key="'+f.key+'" placeholder="'+esc(f.ph||"")+'" value="'+v+'"></div>';
+}
+function bindFields(){
+  document.querySelectorAll("[data-key]").forEach(function(inp){
+    inp.addEventListener("input",function(){ state.a[inp.dataset.key]=inp.value; save(); });
+  });
+}
+function requireFields(keys){
+  return function(){
+    var ok=true;
+    keys.forEach(function(k){
+      var inp=document.querySelector('[data-key="'+k+'"]');
+      if(inp && !inp.value.trim()){ inp.style.borderColor="var(--stop)"; ok=false; }
+    });
+    return ok;
+  };
+}
+
+function render(){
+  var card=el("card");
+  if(state.i<0){ renderWelcome(card); renderProgress(-1); return; }
+  if(state.i>=CONFIG.steps.length) state.i=CONFIG.steps.length-1;
+  var s=CONFIG.steps[state.i];
+  renderProgress(state.i);
+  var canBack=state.i>0;
+  var h=bannerHtml(s.bg);
+
+  if(s.type==="avatar"){
+    h+='<span class="steptype avatar">Mr. Monell &middot; AI version</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media, true);
+    if(!s.media.video){
+      h+='<div class="avatar-wrap"><div><div class="avatar-pic">M</div><div class="avatar-name">AI Mr. M</div></div>';
+      h+='<div class="bubble">'+esc(s.media.script)+'</div></div>';
+    }
+    h+=slideHtml(s.slide);
+    h+=imgsHtml(s.imgs);
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media); bindNav(null);
+  }
+
+  else if(s.type==="start"){
+    h+='<span class="steptype check">Getting set up</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    h+='<div class="field"><label>Type your full name</label><input type="text" id="nameInput" data-key="teacherName" value="'+esc(ans("teacherName"))+'" placeholder="First Last" autocomplete="name"></div>';
+    h+='<p class="sub">Check each item — grab anything missing before you continue:</p>';
+    s.materials.forEach(function(m,i){ h+=confirmHtml("mat"+i,m); });
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media);
+    bindFields();
+    bindNav(function(){
+      var checksOk=requireChecks(s.materials.map(function(_,i){return "mat"+i;}))();
+      var nameOk=!!ans("teacherName");
+      if(!nameOk) el("nameInput").style.borderColor="var(--stop)";
+      return checksOk&&nameOk;
+    });
+  }
+
+  else if(s.type==="read"){
+    h+='<span class="steptype read">Into the book</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    var pgv=s.pages, pgl="Turn to page";
+    if(/^pp\./.test(pgv)){ pgl="Turn to pages"; pgv=pgv.replace(/^pp\.\s*/,""); }
+    else if(/^p\./.test(pgv)){ pgv=pgv.replace(/^p\.\s*/,""); }
+    h+='<div class="pagecall"><div class="pgbox"><div class="pglabel">'+esc(pgl)+'</div><div class="pgnum">'+esc(pgv)+'</div></div><div class="what">'+s.what+'</div></div>';
+    h+=imgsHtml(s.imgs);
+    if(s.nb){ h+='<div class="nb"><div class="nb-tag">Notebooks out</div><div class="nb-q">'+esc(s.nb.prompt)+'</div></div>'; }
+    if(s.capture){ h+=fieldHtml(s.capture); }
+    if(s.capture2){ s.capture2.forEach(function(f){ h+=fieldHtml(f); }); }
+    h+=confirmHtml("rc", s.confirm);
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media); bindFields();
+    bindNav(function(){
+      var need=[]; if(s.capture) need.push(s.capture.key); if(s.capture2) s.capture2.forEach(function(f){need.push(f.key);});
+      return requireChecks(["rc"])() && (need.length? requireFields(need)() : true);
+    });
+  }
+
+  else if(s.type==="notebook"){
+    h+='<span class="steptype notebook">Handwritten</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    h+='<div class="nb"><div class="nb-tag">Notebooks out</div><div class="nb-q">'+esc(s.prompt)+'</div>'+(s.hint?'<div class="nb-hint">'+esc(s.hint)+'</div>':"")+'</div>';
+    h+=confirmHtml("nbc", s.confirm);
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media); bindNav(requireChecks(["nbc"]));
+  }
+
+  else if(s.type==="info"){
+    h+='<span class="steptype check">Transition</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    h+='<p class="body-text">'+esc(s.text)+'</p>';
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media); bindNav(null);
+  }
+
+  else if(s.type==="capture"){
+    h+='<span class="steptype capture">Type it in</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    if(s.intro) h+='<p class="sub">'+esc(s.intro)+'</p>';
+    s.fields.forEach(function(f){ h+=fieldHtml(f); });
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media); bindFields();
+    bindNav(requireFields(s.fields.map(function(f){return f.key;})));
+  }
+
+  else if(s.type==="checkpoint"){
+    h+='<span class="steptype check">Checkpoint</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    if(s.text) h+='<p class="body-text">'+esc(s.text)+'</p>';
+    h+='<div class="sum">';
+    s.show.forEach(function(k){
+      var v=ans(k);
+      var label=(CONFIG.keyLabels&&CONFIG.keyLabels[k])||k;
+      h+='<div class="sum-row"><div class="k">'+esc(label)+'</div><div class="v'+(v?"":" empty")+'">'+(v?esc(v):"not filled in yet — go Back")+'</div></div>';
+    });
+    h+='</div>';
+    h+='<div class="evi"><span class="on">attendance: log signed</span><span class="on">notes: in your notebook</span><span>lesson plan: next</span><span>reflection: after that</span></div>';
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media); bindNav(null);
+  }
+
+  else if(s.type==="ai"){
+    h+='<span class="steptype ai">AI build</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    h+='<ol class="steps-list">';
+    s.steps.forEach(function(t){ h+='<li>'+esc(t.replace("[PLATFORM]", CONFIG.aiPlatformName))+'</li>'; });
+    h+='</ol>';
+    if(CONFIG.aiPlatformUrl) h+='<a class="linkout" href="'+esc(CONFIG.aiPlatformUrl)+'" target="_blank" rel="noopener">Open '+esc(CONFIG.aiPlatformName)+'</a>';
+    h+=imgsHtml(s.imgs);
+    h+='<div class="promptbox" id="pbox">'+esc(fill(s.promptTemplate))+'</div>';
+    h+='<button class="copy-btn" id="copyBtn">Copy my prompt</button><div style="clear:both"></div>';
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media);
+    el("copyBtn").onclick=function(){
+      var txt=fill(s.promptTemplate);
+      (navigator.clipboard? navigator.clipboard.writeText(txt) : Promise.reject()).then(function(){
+        el("copyBtn").textContent="Copied ✓";
+      }).catch(function(){
+        var r=document.createRange(); r.selectNodeContents(el("pbox"));
+        var sel=getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        el("copyBtn").textContent="Select-all done — press Ctrl+C";
+      });
+    };
+    bindNav(null);
+  }
+
+  else if(s.type==="form"){
+    h+='<span class="steptype form">Submit</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    h+='<p class="body-text">'+esc(s.text)+'</p>';
+    h+='<a class="linkout" id="formLink" href="#" target="_blank" rel="noopener">Open my pre-filled form</a>';
+    h+=confirmHtml("fc", s.confirm);
+    h+=navHtml(s,canBack); card.innerHTML=h; bindMedia(s.media);
+    // Build the URL at click time so the session log rides out complete —
+    // opening the form IS the finish stamp.
+    var fl=el("formLink");
+    fl.addEventListener("click",function(){
+      if(!state.t.done) state.t.done=Date.now();
+      fl.href=prefillUrl();
+      save();
+    });
+    bindNav(requireChecks(["fc"]));
+  }
+
+  else if(s.type==="done"){
+    h+='<span class="steptype done">Complete</span><h1>'+esc(titleCase(s.title))+'</h1>';
+    h+=mediaBanner(s.media);
+    h+='<p class="body-text">'+esc(s.text)+'</p>';
+    h+='<div class="evi"><span class="on">attendance</span><span class="on">training notes</span><span class="on">lesson plan</span><span class="on">reflection</span></div>';
+    h+='<p class="sub" style="font-family:var(--mono);font-size:12px">'+esc(sessionLog())+'</p>';
+    h+='<p class="sub">'+esc(s.unfinished)+'</p>';
+    h+='<div class="nav"><button class="btn ghost" id="backBtn">Back</button><span></span>'
+      +'<button class="btn ghost" id="resetBtn">Start over (clears saved progress)</button></div>';
+    card.innerHTML=h; bindMedia(s.media);
+    el("backBtn").onclick=function(){ state.i--; save(); render(); };
+    el("resetBtn").onclick=function(){ if(confirm("Clear this computer’s saved progress?")){ state={i:-1,a:{}}; save(); render(); } };
+  }
+}
+
+function renderWelcome(card){
+  var resumed = state.a && state.a.teacherName;
+  var h=bannerHtml("media/img/bg-arrive.jpg");
+  h+='<img class="coverimg" src="media/img/cover.jpg" alt="" onerror="this.style.display=\'none\'">';
+  h+='<span class="steptype avatar">Session 1</span>';
+  h+='<h1>AI with Intention &mdash; Teacher Book Study</h1>';
+  h+='<p class="body-text">A guided, self-paced session. You’ll need your book, your Title II notebook, and a pen. The screen walks you through everything else — about '+totalMins+' minutes at a comfortable pace.</p>';
+  h+='<p class="sub">Your progress saves automatically on this computer. If you don’t finish today, you’ll pick up exactly where you left off on Friday.</p>';
+  h+='<div class="nav"><span></span><span></span><button class="btn primary" id="goBtn">'+(resumed&&state.i>0?"Resume where I left off":"Begin")+'</button></div>';
+  card.innerHTML=h;
+  el("goBtn").onclick=function(){
+    if(!state.t.start) state.t.start=Date.now();
+    enterTs=Date.now();
+    if(state.i<0) state.i=0;
+    save(); render(); window.scrollTo(0,0);
+  };
+}
+
+/* remember checkbox states across back/forward and reloads */
+el("card").addEventListener("change", function(e){
+  var t=e.target;
+  if(t && t.type==="checkbox" && t.closest(".confirm")){
+    state.a["chk_"+state.i+"_"+t.id] = t.checked ? "1" : "";
+    save();
+  }
+});
+
+render();
+</script>
+</body>
+</html>

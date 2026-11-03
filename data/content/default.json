@@ -1,0 +1,139 @@
+{
+  "_comment": "Used when the date has no file, or the file does not mention that class. Keys are class ids, plus elementary / ms-stem / hs-stem as fallbacks. minutes is the share of a full period. minMinutes is the floor. flex segments give up time first when class starts late. Copy data/content/_template.json to YYYY-MM-DD.json to replace a day.",
+  "classes": {
+    "hs-stem": {
+      "title": "STEM",
+      "standby": "Find the card with your name. That is your seat. Sit down and look at the screen.",
+      "segments": [
+        {"type": "procedure", "ref": "entry", "minutes": 4, "minMinutes": 2},
+        {
+          "type": "slide",
+          "title": "Launch",
+          "minutes": 8,
+          "minMinutes": 4,
+          "kicker": "Already on the screen when you walk in",
+          "lines": [
+            ["Read it and start it", "Nobody tells you to begin."],
+            ["Your laptop number is on your name card", "Two hands, carried closed."],
+            ["Hand up when you are in", "Then eyes up front."]
+          ]
+        },
+        {
+          "type": "run-video",
+          "title": "Work time",
+          "minutes": 28,
+          "minMinutes": 8,
+          "flex": true,
+          "lines": [
+            ["Stay on the task on the board", ""],
+            ["Table first if you get stuck", "Then a hand up."]
+          ]
+        },
+        {
+          "type": "quiz",
+          "title": "Procedure check",
+          "minutes": 6,
+          "minMinutes": 3,
+          "questions": [
+            {
+              "q": "You walk in the door. What happens first?",
+              "options": ["Wait for instructions", "Read the screen and start the Launch Activity", "Ask what we're doing today", "Find a friend"],
+              "answer": 1
+            },
+            {
+              "q": "You have a question. Nobody at your table is finished yet. What do you do?",
+              "options": ["Ask the person next to you anyway", "Put your hand up and keep working", "Call across the room", "Get up and go find an adult"],
+              "answer": 1
+            },
+            {
+              "q": "Your laptop won't charge. What do you do?",
+              "options": ["Take a different one off the cart", "Swap with someone whose one works", "Tell the teacher, right away", "Deal with it tomorrow"],
+              "answer": 2
+            }
+          ]
+        },
+        {"type": "procedure", "ref": "shutdown", "minutes": 4, "minMinutes": 2}
+      ]
+    },
+    "ms-stem": {
+      "title": "STEM",
+      "standby": "Find the card with your name. That is your seat. Sit down quietly and wait.",
+      "segments": [
+        {"type": "procedure", "ref": "entry", "minutes": 4, "minMinutes": 2},
+        {
+          "type": "slide",
+          "title": "Launch",
+          "minutes": 8,
+          "minMinutes": 4,
+          "kicker": "Already on the screen when you walk in",
+          "lines": [
+            ["Read it and start it", "Nobody tells you to begin."],
+            ["Your seat is your seat", "Same one every day."]
+          ]
+        },
+        {
+          "type": "run-video",
+          "title": "Work time",
+          "minutes": 22,
+          "minMinutes": 6,
+          "flex": true,
+          "lines": [
+            ["Stay on the task", ""],
+            ["Help your table. Don't do it for them.", ""]
+          ]
+        },
+        {
+          "type": "quiz",
+          "title": "Procedure check",
+          "minutes": 5,
+          "minMinutes": 3,
+          "questions": [
+            {
+              "q": "Where do you sit?",
+              "options": ["Anywhere open", "With your friends", "Your assigned seat, every time", "Wherever there's a laptop"],
+              "answer": 2
+            },
+            {
+              "q": "When does cleanup start?",
+              "options": ["When the screen turns red", "When you finish your build", "When someone tells you", "At the bell"],
+              "answer": 0
+            }
+          ]
+        },
+        {"type": "procedure", "ref": "shutdown", "minutes": 4, "minMinutes": 2},
+        {"type": "procedure", "ref": "reset", "minutes": 5, "minMinutes": 3}
+      ]
+    },
+    "elementary": {
+      "title": "STEAM",
+      "standby": "Come in with your teacher. Walking. Quiet voices. Look at the screen.",
+      "segments": [
+        {"type": "procedure", "ref": "k6-entry", "minutes": 3, "minMinutes": 2},
+        {"type": "procedure", "ref": "k6-colors", "minutes": 3, "minMinutes": 2},
+        {
+          "type": "slide",
+          "title": "Today",
+          "minutes": 5,
+          "minMinutes": 2,
+          "lines": [
+            ["Eyes on the screen", "The border tells you where your body is."],
+            ["Your teacher will say the build", "Nothing to touch until the screen says so."]
+          ]
+        },
+        {
+          "type": "run-video",
+          "title": "Build time",
+          "minutes": 22,
+          "minMinutes": 6,
+          "flex": true,
+          "lines": [
+            ["Stay at your table", ""],
+            ["Hand up if you need an adult", "Don't call across the room."]
+          ]
+        },
+        {"type": "procedure", "ref": "k6-cleanup", "minutes": 4, "minMinutes": 2},
+        {"type": "procedure", "ref": "k6-reset", "minutes": 3, "minMinutes": 2}
+      ]
+    }
+  }
+}

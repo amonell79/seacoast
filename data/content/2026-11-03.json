@@ -1,0 +1,160 @@
+{
+  "_comment": "Sample Tuesday. Replace this with the real lesson, or delete the file to fall back to data/content/default.json. Classes left out (3-B Bowlin, 5-A Rogers) use the default elementary playlist.",
+  "date": "2026-11-03",
+  "classes": {
+    "hs-stem": {
+      "title": "Sample · SD cards. Replace this file with the real lesson.",
+      "standby": "Your seat, then your laptop. Start the list on the screen without being asked.",
+      "segments": [
+        {"type": "procedure", "ref": "entry", "minutes": 3, "minMinutes": 2},
+        {
+          "type": "slide",
+          "title": "Launch",
+          "minutes": 6,
+          "minMinutes": 3,
+          "lines": [
+            ["Laptop. Two hands, carried closed.", "Your number is on your card."],
+            ["Sign in and open Classroom", "Today's assignment is already there."],
+            ["Hand up once you're in", "Screen off to the side. Eyes up front."]
+          ]
+        },
+        {
+          "type": "youtube",
+          "title": "Confusing symbols on SD cards",
+          "videoId": "Bw89C41NY7U",
+          "minutes": 8,
+          "minMinutes": 4
+        },
+        {
+          "type": "run-video",
+          "title": "Talk, then work",
+          "minutes": 8,
+          "minMinutes": 3,
+          "lines": [
+            ["Which number means a card can keep up with 4K?", "It is not the big one on the front."],
+            ["We never format a card until the copy is verified.", "Until then the footage exists in one place."]
+          ]
+        },
+        {
+          "type": "edpuzzle",
+          "title": "Edpuzzle — your track",
+          "url": "",
+          "minutes": 14,
+          "minMinutes": 5,
+          "flex": true,
+          "lines": [
+            ["Open today's Edpuzzle from Classroom", "Paste the assignment link into this day's file to embed it."]
+          ]
+        },
+        {
+          "type": "quiz",
+          "title": "Card check",
+          "minutes": 7,
+          "minMinutes": 3,
+          "questions": [
+            {
+              "q": "Which card is the smallest — the one in phones and drones?",
+              "options": ["SD", "CFexpress", "microSD", "They are all the same size"],
+              "answer": 2
+            },
+            {
+              "q": "Which marking tells you the minimum sustained write speed for video?",
+              "options": ["The GB number", "The C in a circle", "The V number", "The brand name"],
+              "answer": 2
+            },
+            {
+              "q": "When is it OK to format a card?",
+              "options": ["As soon as the copy starts", "When the camera asks", "After the copy is verified", "Never"],
+              "answer": 2
+            }
+          ]
+        },
+        {"type": "procedure", "ref": "shutdown", "minutes": 4, "minMinutes": 2}
+      ]
+    },
+    "ms-stem": {
+      "title": "Sample · SD cards, then reset the room.",
+      "standby": "Your seat, then your laptop. Start the list on the screen without being asked.",
+      "segments": [
+        {"type": "procedure", "ref": "entry", "minutes": 3, "minMinutes": 2},
+        {
+          "type": "slide",
+          "title": "Launch",
+          "minutes": 5,
+          "minMinutes": 3,
+          "lines": [
+            ["Laptop. Two hands, carried closed.", "Sign in. Open Classroom."],
+            ["Hand up once you're in", "Eyes up front."]
+          ]
+        },
+        {
+          "type": "youtube",
+          "title": "Confusing symbols on SD cards",
+          "videoId": "Bw89C41NY7U",
+          "minutes": 7,
+          "minMinutes": 4
+        },
+        {
+          "type": "edpuzzle",
+          "title": "Edpuzzle — your track",
+          "url": "",
+          "minutes": 12,
+          "minMinutes": 4,
+          "flex": true
+        },
+        {
+          "type": "run-video",
+          "title": "Work the room",
+          "minutes": 8,
+          "minMinutes": 3,
+          "flex": true
+        },
+        {
+          "type": "quiz",
+          "title": "Card check",
+          "minutes": 5,
+          "minMinutes": 3,
+          "questions": [
+            {
+              "q": "4K video needs at least which card?",
+              "options": ["C10", "U1 / V10", "U3 / V30", "Any card that fits"],
+              "answer": 2
+            }
+          ]
+        },
+        {"type": "procedure", "ref": "shutdown", "minutes": 4, "minMinutes": 2},
+        {"type": "procedure", "ref": "reset", "minutes": 4, "minMinutes": 3}
+      ]
+    },
+    "e-2a-bergman": {
+      "title": "Sample · walls, two bricks on two bricks.",
+      "standby": "Come in with your teacher. Walking. Quiet voices. Sit and look at the screen.",
+      "segments": [
+        {"type": "procedure", "ref": "k6-entry", "minutes": 3, "minMinutes": 2},
+        {
+          "type": "slide",
+          "title": "Today you are engineers",
+          "minutes": 5,
+          "minMinutes": 2,
+          "lines": [
+            ["Two walls", "Same bricks. One of them will hold more."],
+            ["Watch first", "Hands stay down until the border changes."]
+          ]
+        },
+        {
+          "type": "run-video",
+          "title": "Build your wall",
+          "minutes": 24,
+          "minMinutes": 8,
+          "flex": true,
+          "lines": [
+            ["Stay at your table", "Pieces stay with their kit."],
+            ["Picture before you take it apart", "Then everything back in the box."]
+          ]
+        },
+        {"type": "procedure", "ref": "k6-cleanup", "minutes": 4, "minMinutes": 2},
+        {"type": "procedure", "ref": "k6-reset", "minutes": 4, "minMinutes": 2}
+      ]
+    }
+  }
+}

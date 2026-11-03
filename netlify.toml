@@ -1,0 +1,17 @@
+# Class TV is the site root. The archived shells stay at /sites/stem,
+# /sites/music, and /sites/pd. This is a static site: there is no build.
+[build]
+  publish = "."
+
+# Browsers should pick up a schedule or lesson edit on the next refresh.
+# Netlify already revalidates static files; this states it for the data Tony edits.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Content-Type-Options = "nosniff"
