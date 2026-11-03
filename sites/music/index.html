@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SCA Music</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#19369B; --deep:#0F2466; --gold:#FED916; --ivory:#FBFAF5; --ink:#1B2233; }
+  * { box-sizing:border-box; }
+  html,body { height:100%; margin:0; }
+  body {
+    font-family:"Nunito", system-ui, sans-serif; background:var(--navy); color:var(--ivory);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    padding:clamp(32px,6vw,72px) 20px;
+  }
+  .staff { width:min(560px,86vw); height:52px; margin-bottom:28px;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.28) 0 2px, transparent 2px 12px); }
+  h1 { font-weight:900; font-size:clamp(2.6rem,7vw,4.4rem); line-height:1; margin:0; letter-spacing:-.01em; }
+  p.sub { font-weight:600; font-size:1.1rem; opacity:.8; margin:.8rem 0 2.6rem; }
+  .keys { display:flex; gap:10px; }
+  a.key {
+    display:flex; flex-direction:column; justify-content:flex-end; align-items:center;
+    width:clamp(140px,34vw,200px); height:clamp(220px,46vw,290px); padding:0 14px 24px;
+    background:var(--ivory); color:var(--ink); text-decoration:none; border-radius:0 0 14px 14px;
+    border-bottom:10px solid #D9D6CB; transition:transform .12s ease, border-bottom-width .12s ease;
+  }
+  a.key:hover { transform:translateY(4px); border-bottom-width:6px; }
+  a.key:focus-visible { outline:4px solid var(--gold); outline-offset:4px; }
+  a.key strong { font-weight:900; font-size:1.45rem; }
+  a.key span { font-weight:600; font-size:.95rem; color:#4A5470; margin-top:4px; }
+  footer { margin-top:3rem; font-weight:600; font-size:.9rem; opacity:.65; }
+  @media (prefers-reduced-motion:reduce){ a.key{transition:none} }
+</style>
+</head>
+<body>
+  <div class="staff" aria-hidden="true"></div>
+  <h1>SCA Music</h1>
+  <p class="sub">Choose a screen to open</p>
+  <nav class="keys">
+    <a class="key" href="rhythm.html"><strong>Rhythm</strong><span>Beat and rhythm exercises</span></a>
+    <a class="key" href="keys.html"><strong>Note Names</strong><span>Keyboard and xylophone notes</span></a>
+  </nav>
+  <footer>Seacoast Christian Academy</footer>
+</body>
+</html>
