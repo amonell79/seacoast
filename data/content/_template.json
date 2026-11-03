@@ -1,0 +1,42 @@
+{
+  "_comment": "Copy this file to data/content/YYYY-MM-DD.json and fill in the classes that meet that day. Any class you leave out uses data/content/default.json. Segment types: slide, youtube, edpuzzle, run-video, quiz (or game), procedure. procedure uses ref from data/procedures.json. Put the Edpuzzle assignment URL in url. youtube uses an 11-character video id. flex:true marks the block that shrinks when the class starts late. End time is the bell — do not schedule past it.",
+  "date": "YYYY-MM-DD",
+  "classes": {
+    "hs-stem": {
+      "title": "Title that shows under the class name",
+      "standby": "What they should do the moment they walk in.",
+      "segments": [
+        {"type": "procedure", "ref": "entry", "minutes": 3, "minMinutes": 2},
+        {
+          "type": "slide",
+          "title": "Launch",
+          "minutes": 6,
+          "minMinutes": 3,
+          "lines": [
+            ["First line is the big text", "Second line is the smaller line under it."]
+          ]
+        },
+        {"type": "youtube", "title": "Watch", "videoId": "Bw89C41NY7U", "minutes": 8, "minMinutes": 4},
+        {
+          "type": "edpuzzle",
+          "title": "Edpuzzle",
+          "url": "https://edpuzzle.com/assignments/PASTE_THE_ID",
+          "minutes": 12,
+          "minMinutes": 5,
+          "flex": true
+        },
+        {"type": "run-video", "title": "Work the room", "minutes": 12, "minMinutes": 4, "flex": true},
+        {
+          "type": "quiz",
+          "title": "Check",
+          "minutes": 5,
+          "minMinutes": 3,
+          "questions": [
+            {"q": "Question text", "options": ["A", "B", "C", "D"], "answer": 0}
+          ]
+        },
+        {"type": "procedure", "ref": "shutdown", "minutes": 4, "minMinutes": 2}
+      ]
+    }
+  }
+}

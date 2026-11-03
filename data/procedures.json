@@ -1,0 +1,164 @@
+{
+  "_comment": "Procedure slides and voiceovers pulled from the MS/HS session shell and the K-6 resource page. A segment of type \"procedure\" points at one of these with \"ref\". Audio files were already real mp3s beside the old shell; they are copied under media/audio so the TV does not depend on the archived pages.",
+  "procedures": {
+    "entry": {
+      "title": "How class starts",
+      "audio": "media/audio/vo-proc-entry.mp3",
+      "lines": [
+        ["Come in. Go to your seat.", "Look at the screen."],
+        ["Read the Launch Activity", "It's already there. Nobody has to tell you."],
+        ["Start it", "You are not waiting on me. I'll be taking attendance."],
+        ["Finish it", "Before the screen moves on."]
+      ]
+    },
+    "attention": {
+      "title": "The attention signal",
+      "audio": "media/audio/vo-proc-attention.mp3",
+      "lines": [
+        ["An adult puts a hand up", "Any adult. Any day."],
+        ["You stop talking", "That's the whole signal."],
+        ["You do not put your hand up back", "You don't have to do anything. You just stop."],
+        ["About three seconds", "Not thirty."]
+      ]
+    },
+    "cleanup": {
+      "title": "Cleanup",
+      "audio": "media/audio/vo-proc-cleanup.mp3",
+      "lines": [
+        ["The screen turns red", "Not when you feel like it. Not when someone tells you."],
+        ["Three tones, going down", "Listen for it. You don't have to be watching."],
+        ["Same thing every day", "Every class in this room."]
+      ]
+    },
+    "help": {
+      "title": "When you have a question",
+      "audio": "media/audio/vo-proc-help.mp3",
+      "lines": [
+        ["Look at your table first", "Is anyone already finished?"],
+        ["Ask them", "Someone finished can help you."],
+        ["Nobody finished? Hand up.", "Keep working on something else while you wait."],
+        ["Don't call across the room", "And don't get up to go find an adult."]
+      ]
+    },
+    "early": {
+      "title": "When you finish early",
+      "audio": "media/audio/vo-proc-early.mp3",
+      "lines": [
+        ["You become the person your table can ask", ""],
+        ["Help them — don't do it for them", "Take it out of their hands and you finished their work."],
+        ["A table is done when the table is done", "Not when you personally are done."],
+        ["Whole table finished? Then it's your time.", ""]
+      ]
+    },
+    "seats": {
+      "title": "Your seat",
+      "audio": "media/audio/vo-proc-seats.mp3",
+      "lines": [
+        ["The seat you're in today is your assigned seat", "Until further notice."],
+        ["Same seat, every day", "Without being asked."],
+        ["It changes only if I move you", ""]
+      ]
+    },
+    "shutdown": {
+      "title": "Shutting down",
+      "audio": "media/audio/vo-proc-shutdown.mp3",
+      "lines": [
+        ["Save. Log out. Close the lid.", ""],
+        ["Two hands, carried closed", "Your numbered slot — not an open one."],
+        ["Charger in. Check the light.", "No light? Say so before you walk away."],
+        ["Back to your seat", "The bell releases you, not the cart."]
+      ]
+    },
+    "report": {
+      "title": "When something's wrong with it",
+      "audio": "media/audio/vo-proc-report.mp3",
+      "lines": [
+        ["Say so right away", "Not at the end of class. Not tomorrow."],
+        ["Don't trade. Don't take another one.", "A quiet swap moves the problem onto someone else's name."],
+        ["Accidents happen. Equipment breaks.", "That's normal. Nobody's in trouble for it."],
+        ["All I need is to know", "A machine nobody tells me about doesn't get fixed."]
+      ]
+    },
+    "reset": {
+      "title": "The end of class",
+      "audio": "media/audio/vo-proc-reset.mp3",
+      "lines": [
+        ["Elementary is in here in five minutes", "They shouldn't be able to tell we were here."],
+        ["Every table has a reset job", "Yours changes every week. You'll know it before you stand up."],
+        ["Tables clear. Chairs in. Boxes on the shelf.", ""],
+        ["Nobody touches the animals", ""]
+      ]
+    },
+    "k6-entry": {
+      "title": "How class starts",
+      "lines": [
+        ["Come in with your teacher", "Walking. Quiet voices."],
+        ["Go to your seat", "The screen will already be on. Look at it."],
+        ["Sit quietly until you get instructions", "Nothing to touch yet. Just wait."]
+      ]
+    },
+    "k6-attention": {
+      "title": "The attention signal",
+      "lines": [
+        ["An adult puts a hand up", "Any adult. Any day."],
+        ["You stop talking", "That is the whole signal. You don't raise yours back."],
+        ["About three seconds", "Not thirty."]
+      ]
+    },
+    "k6-colors": {
+      "title": "The colors around the screen",
+      "lines": [
+        ["RED border: you are in your seat", "No exceptions, no asking."],
+        ["AMBER border: up, but stay at your table", "Your own table's area only."],
+        ["GREEN border: you may be up", "Still walking. Always walking."]
+      ]
+    },
+    "k6-help": {
+      "title": "When you have a question",
+      "lines": [
+        ["Raise your hand and wait", "An adult will come to you."],
+        ["Don't call out", "And don't get up to find someone."]
+      ]
+    },
+    "k6-early": {
+      "title": "When you finish early",
+      "lines": [
+        ["Help someone at your table", "Help them — don't do it for them."],
+        ["Don't take it out of their hands", "That isn't helping. That's finishing their work."],
+        ["When your whole table is done, that time is yours", ""]
+      ]
+    },
+    "k6-cleanup": {
+      "title": "Cleanup",
+      "lines": [
+        ["The screen turns red", "And makes three tones, going down. Listen for it."],
+        ["Stop building. Start cleaning.", "Not when you feel like it — when it turns red."],
+        ["Same thing every day", ""]
+      ]
+    },
+    "k6-reset": {
+      "title": "Reset your station",
+      "lines": [
+        ["Table cleared", "Nothing left on it."],
+        ["Chair pushed in", "All the way."],
+        ["Floor checked", "If it is under your table, it is yours."]
+      ]
+    },
+    "k6-seats": {
+      "title": "Where you sit",
+      "lines": [
+        ["Your teacher tells you where to sit", "Listen for it, then go straight there."],
+        ["It might not be last week's seat", "That is normal."],
+        ["Sit where you are put", "No swapping, no asking to move."]
+      ]
+    },
+    "k6-breaks": {
+      "title": "If something breaks, tell an adult",
+      "lines": [
+        ["Say so right away", "Not at the end. Not tomorrow."],
+        ["Things break. That is normal.", "Nobody is in trouble for an accident."],
+        ["We can't fix what we don't know about", ""]
+      ]
+    }
+  }
+}

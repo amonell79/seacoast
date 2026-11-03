@@ -1,0 +1,223 @@
+{
+  "_comment": "Tony's classes. MS/HS STEM uses a bell block (\"1\" or \"2\") so Thursday and daily-chapel pick up the shorter period from data/schedule.json. Elementary rows use clock times from the resource grid. halfDay: true means the class still meets on a half-day variant. needsConfirmation marks a time Tony still wants checked. Student names are not stored here. Load a roster from the TV (see media/roster.example.csv).",
+  "classes": [
+    {
+      "id": "hs-stem",
+      "title": "HS STEM",
+      "level": "hs",
+      "subject": "STEM",
+      "grade": "HS",
+      "teacher": "Monell",
+      "room": "102/103",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["mon", "tue", "wed", "thu", "fri"], "block": "1"}
+      ]
+    },
+    {
+      "id": "ms-stem",
+      "title": "MS STEM",
+      "level": "ms",
+      "subject": "STEM",
+      "grade": "MS",
+      "teacher": "Monell",
+      "room": "102/103",
+      "tables": 3,
+      "meets": [
+        {"weekdays": ["mon", "tue", "wed", "thu", "fri"], "block": "2"}
+      ]
+    },
+    {
+      "id": "e-3a-marsh",
+      "title": "3-A Marsh",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "3-A",
+      "teacher": "Marsh",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["mon"], "start": "09:50", "end": "10:30", "halfDay": true},
+        {
+          "weekdays": ["thu"],
+          "start": "10:45",
+          "end": "11:15",
+          "subject": "Computer lab",
+          "note": "Second computer-lab visit. The printed resource grid labels this slot STEAM."
+        }
+      ]
+    },
+    {
+      "id": "e-5b-richards",
+      "title": "5-B Richards",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "5-B",
+      "teacher": "Richards",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["mon"], "start": "10:45", "end": "11:15"},
+        {
+          "weekdays": ["fri"],
+          "start": "13:10",
+          "end": "13:50",
+          "subject": "STEAM lab",
+          "note": "Friday lab visit. The printed grid says STEAM."
+        }
+      ]
+    },
+    {
+      "id": "e-1b-mclean",
+      "title": "1-B McLean",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "1-B",
+      "teacher": "McLean",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["mon"], "start": "11:30", "end": "12:10"},
+        {"weekdays": ["wed"], "start": "09:50", "end": "10:30", "halfDay": true}
+      ]
+    },
+    {
+      "id": "e-2b-felix",
+      "title": "2-B Felix",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "2-B",
+      "teacher": "Felix",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["mon"], "start": "12:15", "end": "12:45"},
+        {
+          "weekdays": ["thu"],
+          "start": "12:15",
+          "end": "12:45",
+          "subject": "Computer lab",
+          "note": "Second computer-lab visit. The printed resource grid labels this slot STEAM."
+        }
+      ]
+    },
+    {
+      "id": "e-2a-bergman",
+      "title": "2-A Bergman",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "2-A",
+      "teacher": "Bergman",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["tue"], "start": "09:50", "end": "10:30", "halfDay": true}
+      ]
+    },
+    {
+      "id": "e-3b-bowlin",
+      "title": "3-B Bowlin",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "3-B",
+      "teacher": "Bowlin",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["tue"], "start": "10:45", "end": "11:15"}
+      ]
+    },
+    {
+      "id": "e-5a-rogers",
+      "title": "5-A Rogers",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "5-A",
+      "teacher": "Rogers",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["tue"], "start": "11:30", "end": "12:00"},
+        {
+          "weekdays": ["fri"],
+          "start": "11:30",
+          "end": "12:05",
+          "subject": "STEAM lab",
+          "needsConfirmation": true,
+          "note": "Friday lab. Recently swapped with King. Confirm 11:30–12:05. The printed grid has Rogers in STEAM at this time."
+        }
+      ]
+    },
+    {
+      "id": "e-4a-edwards",
+      "title": "4-A Edwards",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "4-A",
+      "teacher": "Edwards",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["wed"], "start": "10:45", "end": "11:15"}
+      ]
+    },
+    {
+      "id": "e-6a-culley",
+      "title": "6-A Culley",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "6-A",
+      "teacher": "Culley",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["wed"], "start": "11:30", "end": "12:00"}
+      ]
+    },
+    {
+      "id": "e-k5-walters",
+      "title": "K5-B Walters",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "K5-B",
+      "teacher": "Walters",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["wed"], "start": "12:15", "end": "13:00"}
+      ]
+    },
+    {
+      "id": "e-1a-lesnick",
+      "title": "1-A Lesnick",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "1-A",
+      "teacher": "Lesnick",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["fri"], "start": "09:50", "end": "10:30", "halfDay": true}
+      ]
+    },
+    {
+      "id": "e-6b-king",
+      "title": "6-B King",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "6-B",
+      "teacher": "King",
+      "tables": 4,
+      "meets": [
+        {
+          "weekdays": ["fri"],
+          "start": "10:45",
+          "end": "11:15",
+          "needsConfirmation": true,
+          "note": "Recently swapped with Rogers. Confirm about 10:45–11:15. The printed grid still has King in STEAM at 11:30–12:05."
+        }
+      ]
+    },
+    {
+      "id": "e-4b-brisolara",
+      "title": "4-B Brisolara",
+      "level": "elementary",
+      "subject": "STEAM",
+      "grade": "4-B",
+      "teacher": "Brisolara",
+      "tables": 4,
+      "meets": [
+        {"weekdays": ["fri"], "start": "12:15", "end": "12:45"}
+      ]
+    }
+  ]
+}

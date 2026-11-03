@@ -1,0 +1,142 @@
+{
+  "_comment": "Seacoast Christian Academy bell schedule for the Class TV. Edit times here. A class in data/classes.json with \"block\": \"1\" follows Period 1 of whichever variant is in effect, so a chapel day shortens HS STEM without a second copy of the time. Elementary STEAM times live on the class, because they do not follow the MS/HS bells. Weekday defaults are below. Special days go in overrides. Rows with \"example\": true are ignored until you delete that flag. Times were checked against schedule/bell_schedule.txt (rev. 08/07/2026) and schedule/Elementary_Resource_Schedule_2026-2027.txt. Periods 1, 2, and chapel match on the early-lunch and late-lunch waves. Lunch and period 4 do not, and Tony's classes do not use them.",
+  "timezone": "America/New_York",
+  "school": "Seacoast Christian Academy",
+  "year": "2026-2027",
+  "defaults": {
+    "mon": "regular",
+    "tue": "regular",
+    "wed": "wednesday",
+    "thu": "thursday-chapel",
+    "fri": "regular",
+    "sat": "none",
+    "sun": "none"
+  },
+  "variants": {
+    "regular": {
+      "label": "Regular day",
+      "bells": {
+        "earlyLunch": [
+          {"id": "1", "name": "Period 1", "start": "08:00", "end": "08:50"},
+          {"id": "2", "name": "Period 2", "start": "08:55", "end": "09:45"},
+          {"id": "3", "name": "Period 3", "start": "09:50", "end": "10:40"},
+          {"id": "lunch", "name": "Lunch", "start": "10:45", "end": "11:15", "kind": "lunch"},
+          {"id": "4", "name": "Period 4", "start": "11:20", "end": "12:10"},
+          {"id": "5", "name": "Period 5", "start": "12:15", "end": "13:05"},
+          {"id": "6", "name": "Period 6", "start": "13:10", "end": "14:00"},
+          {"id": "7", "name": "Period 7", "start": "14:05", "end": "14:55"}
+        ],
+        "lateLunch": [
+          {"id": "1", "name": "Period 1", "start": "08:00", "end": "08:50"},
+          {"id": "2", "name": "Period 2", "start": "08:55", "end": "09:45"},
+          {"id": "3", "name": "Period 3", "start": "09:50", "end": "10:40"},
+          {"id": "4", "name": "Period 4", "start": "10:45", "end": "11:35"},
+          {"id": "lunch", "name": "Lunch", "start": "11:40", "end": "12:10", "kind": "lunch"},
+          {"id": "5", "name": "Period 5", "start": "12:15", "end": "13:05"},
+          {"id": "6", "name": "Period 6", "start": "13:10", "end": "14:00"},
+          {"id": "7", "name": "Period 7", "start": "14:05", "end": "14:55"}
+        ]
+      }
+    },
+    "wednesday": {
+      "label": "Wednesday",
+      "_comment": "MS/HS follows the regular bell. Elementary chapel is 8:15–8:55 and does not move those bells. Tony is in HS STEM until 8:50, so the TV stays on his class through the overlap.",
+      "sameBellsAs": "regular",
+      "extraBlocks": [
+        {
+          "id": "elem-chapel",
+          "name": "Elementary chapel",
+          "start": "08:15",
+          "end": "08:55",
+          "kind": "chapel",
+          "audience": "elementary",
+          "note": "Elementary chapel. MS/HS bells stay on the regular schedule."
+        }
+      ]
+    },
+    "thursday-chapel": {
+      "label": "Thursday chapel",
+      "bells": {
+        "earlyLunch": [
+          {"id": "1", "name": "Period 1", "start": "08:00", "end": "08:40"},
+          {"id": "chapel", "name": "MS/HS chapel", "start": "08:45", "end": "09:25", "kind": "chapel", "audience": "ms-hs"},
+          {"id": "2", "name": "Period 2", "start": "09:30", "end": "10:15"},
+          {"id": "lunch", "name": "Lunch", "start": "10:20", "end": "10:45", "kind": "lunch"},
+          {"id": "3", "name": "Period 3", "start": "10:50", "end": "11:35"},
+          {"id": "4", "name": "Period 4", "start": "11:40", "end": "12:25"},
+          {"id": "5", "name": "Period 5", "start": "12:30", "end": "13:15"},
+          {"id": "6", "name": "Period 6", "start": "13:20", "end": "14:05"},
+          {"id": "7", "name": "Period 7", "start": "14:10", "end": "14:55"}
+        ],
+        "lateLunch": [
+          {"id": "1", "name": "Period 1", "start": "08:00", "end": "08:40"},
+          {"id": "chapel", "name": "MS/HS chapel", "start": "08:45", "end": "09:25", "kind": "chapel", "audience": "ms-hs"},
+          {"id": "2", "name": "Period 2", "start": "09:30", "end": "10:15"},
+          {"id": "3", "name": "Period 3", "start": "10:20", "end": "11:05"},
+          {"id": "lunch", "name": "Lunch", "start": "11:10", "end": "11:35", "kind": "lunch"},
+          {"id": "4", "name": "Period 4", "start": "11:40", "end": "12:25"},
+          {"id": "5", "name": "Period 5", "start": "12:30", "end": "13:15"},
+          {"id": "6", "name": "Period 6", "start": "13:20", "end": "14:05"},
+          {"id": "7", "name": "Period 7", "start": "14:10", "end": "14:55"}
+        ]
+      }
+    },
+    "daily-chapel": {
+      "label": "Daily chapel",
+      "_comment": "Spiritual Emphasis Week and any other week with chapel every morning. Same MS/HS bells as Thursday. Elementary STEAM still meets at its weekday times unless an override cancels it.",
+      "sameBellsAs": "thursday-chapel"
+    },
+    "half-day": {
+      "label": "Half day",
+      "_comment": "Template only. The office paper does not publish a standing half-day bell. Morning MS/HS periods stay at the regular times so Periods 1 and 2 still resolve. Delete afternoon elementary rows by leaving halfDay off their meets. Edit these clocks before a real half day.",
+      "bells": {
+        "earlyLunch": [
+          {"id": "1", "name": "Period 1", "start": "08:00", "end": "08:50"},
+          {"id": "2", "name": "Period 2", "start": "08:55", "end": "09:45"},
+          {"id": "3", "name": "Period 3", "start": "09:50", "end": "10:40"}
+        ],
+        "lateLunch": [
+          {"id": "1", "name": "Period 1", "start": "08:00", "end": "08:50"},
+          {"id": "2", "name": "Period 2", "start": "08:55", "end": "09:45"},
+          {"id": "3", "name": "Period 3", "start": "09:50", "end": "10:40"}
+        ]
+      }
+    },
+    "none": {
+      "label": "No school",
+      "bells": {"earlyLunch": [], "lateLunch": []}
+    }
+  },
+  "overrides": [
+    {
+      "example": true,
+      "label": "Spiritual Emphasis Week — chapel every morning",
+      "dates": ["2027-01-11", "2027-01-12", "2027-01-13", "2027-01-14", "2027-01-15"],
+      "variant": "daily-chapel"
+    },
+    {
+      "example": true,
+      "label": "Half day",
+      "dates": ["2026-12-18"],
+      "variant": "half-day"
+    },
+    {
+      "example": true,
+      "label": "Field trip — 5th grade out",
+      "dates": ["2026-11-13"],
+      "cancelClasses": ["e-5a-rogers", "e-5b-richards"]
+    },
+    {
+      "example": true,
+      "label": "No school",
+      "dates": ["2026-11-26", "2026-11-27"],
+      "variant": "none"
+    },
+    {
+      "example": true,
+      "label": "Delayed HS STEM (example of a one-class retime)",
+      "dates": ["2026-12-01"],
+      "retimes": {"hs-stem": {"start": "08:00", "end": "08:30"}}
+    }
+  ]
+}
